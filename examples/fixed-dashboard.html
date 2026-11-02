@@ -1,13 +1,14 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>October Growth Dashboard</title>
+<title>Growth Dashboard</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
-/* Layout: header line, title, 4 key tiles, one customer chart beside 2 traffic tiles, then what happened as cards */
+/* Layout: header line, point title, 4 number tiles, one funnel chart, 4 "what happened" cards */
 :root {
   --bg: #fff; --soft: #f9f9f9; --card: #fff;
   --text: rgba(0,0,0,.9); --text-2: rgba(0,0,0,.6); --text-3: rgba(0,0,0,.47);
   --line: rgba(0,0,0,.12); --shadow: 0 4px 20px rgba(0,0,0,.075);
-  --clay: #d97757; --clay-strong: #c6613f; --gray-bar: rgba(0,0,0,.18);
+  --bar: rgba(0,0,0,.14);
+  --clay: #d97757; --clay-strong: #c6613f; --clay-bg: rgba(217,119,87,.14);
   --good: #006c10; --good-bg: rgba(16,161,34,.14);
   --bad: #a42528; --bad-bg: rgba(220,60,61,.12);
   --watch: #794c02; --watch-bg: rgba(251,179,21,.16);
@@ -17,164 +18,167 @@
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #151515; --soft: #0b0b0b; --card: #1f1f1f;
   --text: rgba(255,255,255,.93); --text-2: rgba(255,255,255,.57); --text-3: rgba(255,255,255,.4);
-  --line: rgba(255,255,255,.12); --shadow: none; --gray-bar: rgba(255,255,255,.22);
+  --line: rgba(255,255,255,.12); --shadow: none; --bar: rgba(255,255,255,.16);
   --good: #53c556; --bad: #f17778; --watch: #e49c06; color-scheme: dark; } }
 :root[data-theme="dark"] {
   --bg: #151515; --soft: #0b0b0b; --card: #1f1f1f;
   --text: rgba(255,255,255,.93); --text-2: rgba(255,255,255,.57); --text-3: rgba(255,255,255,.4);
-  --line: rgba(255,255,255,.12); --shadow: none; --gray-bar: rgba(255,255,255,.22);
+  --line: rgba(255,255,255,.12); --shadow: none; --bar: rgba(255,255,255,.16);
   --good: #53c556; --bad: #f17778; --watch: #e49c06; color-scheme: dark; }
 
 body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.55 var(--sans); }
-.wrap { max-width: 1080px; margin: 0 auto; padding-block: 8px 48px;
+.wrap { max-width: 1040px; margin: 0 auto; padding-block: 8px 48px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
-  display: flex; flex-direction: column; gap: 24px; }
+  display: flex; flex-direction: column; gap: 28px; }
 h1, h2 { font-family: var(--serif); font-weight: 400; margin: 0; text-wrap: balance; }
 h1 { font-size: 32px; line-height: 1.2; } h2 { font-size: 22px; line-height: 1.3; }
 .meta { font-size: 13px; color: var(--text-2); border-bottom: 1px solid var(--line); padding: 12px 0; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 20px; min-width: 0; }
-.num { font-size: 40px; font-weight: 500; line-height: 1; font-variant-numeric: tabular-nums; margin: 10px 0 12px; }
-.label { font-size: 13px; color: var(--text-2); display: flex; align-items: center; gap: 8px; }
-.label svg { width: 16px; height: 16px; flex: none; }
+.num { font-size: 40px; font-weight: 500; line-height: 1; font-variant-numeric: tabular-nums; }
+.label { font-size: 13px; color: var(--text-2); }
 .pill { display: inline-block; border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 500; }
 .good { color: var(--good); background: var(--good-bg); } .bad { color: var(--bad); background: var(--bad-bg); } .watch { color: var(--watch); background: var(--watch-bg); }
-.vs { font-size: 13px; color: var(--text-3); margin-left: 6px; }
+.section { display: flex; flex-direction: column; gap: 14px; }
 
 .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-.tiles .card.key { border-color: var(--clay); }
-.mid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
-.side { display: grid; gap: 16px; }
+.tile { display: flex; flex-direction: column; gap: 10px; }
+.tile.main .num { color: var(--clay-strong); }
 
-.chart { display: grid; gap: 14px; margin-top: 18px; }
-.bar-row { display: grid; grid-template-columns: 120px 1fr 48px; align-items: center; gap: 12px; font-size: 13px; }
-.bar-row .name { color: var(--text-2); }
-.bar-row .val { font-size: 16px; font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
-.track { height: 28px; display: flex; border-radius: 6px; overflow: hidden; }
-.seg { height: 100%; display: flex; align-items: center; padding-left: 8px; font-size: 13px; color: #fff; white-space: nowrap; overflow: hidden; }
-.seg.clay { background: var(--clay-strong); }
-.seg.clay-2 { background: var(--clay); opacity: .55; color: var(--text); }
-.seg.gray { background: var(--gray-bar); color: var(--text); }
-.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--text-2); margin-top: 4px; }
-.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.funnel { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 12px; }
+.step { display: flex; flex-direction: column; gap: 8px; }
+.step .bar { height: 10px; border-radius: 6px; background: var(--bar); }
+.step.end .bar { background: var(--clay); }
+.arrow { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 13px; color: var(--text-2); text-align: center; }
+.arrow b { color: var(--text); font-size: 16px; }
 
-.events { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 12px; }
-.event { display: grid; grid-template-columns: 24px 1fr; gap: 12px; }
-.event svg { width: 22px; height: 22px; color: var(--text-3); margin-top: 2px; }
-.event .head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; flex-wrap: wrap; }
-.event b { font-weight: 600; }
-.event p { margin: 4px 0 0; color: var(--text-2); }
-.date { font-size: 13px; color: var(--text-3); }
+.happened { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.event { display: flex; flex-direction: column; gap: 12px; }
+.event-head { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-2); }
+.event-head svg { flex: none; stroke: var(--text-3); }
+.event .big { font-size: 40px; font-weight: 500; line-height: 1; font-variant-numeric: tabular-nums; }
+.event p { margin: 0; }
+.split { display: flex; height: 12px; border-radius: 6px; overflow: hidden; background: var(--bar); }
+.split span { background: var(--clay); }
+.compare { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--text-2); }
+.compare div { display: grid; grid-template-columns: 56px 1fr 40px; align-items: center; gap: 10px; }
+.compare i { display: block; height: 10px; border-radius: 6px; background: var(--bar); }
+.compare .after i { background: var(--clay); }
+.compare b { color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; }
 
-@media (max-width: 860px) {
+@media (max-width: 820px) {
   .tiles { grid-template-columns: repeat(2, 1fr); }
-  .mid, .events { grid-template-columns: 1fr; }
+  .happened { grid-template-columns: 1fr; }
+  .funnel { grid-template-columns: 1fr; }
+  .arrow { flex-direction: row; justify-content: flex-start; }
+  .arrow svg { transform: rotate(90deg); }
 }
-@media (max-width: 420px) {
-  .num { font-size: 32px; }
-  .bar-row { grid-template-columns: 84px 1fr 40px; }
-}
+@media (max-width: 420px) { .tiles { grid-template-columns: 1fr; } }
 </style>
 
 <div class="wrap">
-  <div class="meta">Growth dashboard · October 2026 · For the team · All changes vs September</div>
-  <h1>Paying customers grew by 53 in October, and churn fell 29.8%</h1>
+  <div class="meta">Growth dashboard · October 2026 · For the team · All changes are vs last month</div>
+
+  <h1>Paying customers grew by 53 this month as churn fell 29.8%</h1>
 
   <div class="tiles">
-    <div class="card">
-      <div class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v18M17 7H9.5a3 3 0 0 0 0 6h5a3 3 0 0 1 0 6H6"/></svg>Monthly revenue</div>
+    <div class="card tile main">
+      <div class="label">Monthly revenue</div>
       <div class="num">$87,569</div>
-      <span class="pill good">▲ +1.2%</span><span class="vs">vs September</span>
+      <div><span class="pill good">+1.2% vs last month</span></div>
     </div>
-    <div class="card key">
-      <div class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14c2.7.2 4.5 1.9 5 4.5"/></svg>Paying customers</div>
+    <div class="card tile">
+      <div class="label">Paying customers</div>
       <div class="num">1,307</div>
-      <span class="pill good">▲ +4.2%</span><span class="vs">vs September</span>
+      <div><span class="pill good">+4.2% vs last month</span></div>
     </div>
-    <div class="card">
-      <div class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="8" r="3.5"/><path d="M3.5 20c.6-3.6 3.3-5.5 6.5-5.5 1.5 0 2.9.4 4 1.2M18 14v6M15 17h6"/></svg>New paying customers</div>
+    <div class="card tile">
+      <div class="label">New paying customers</div>
       <div class="num">86</div>
-      <span class="pill good">▲ +34.4%</span><span class="vs">vs September</span>
+      <div><span class="pill good">+34.4% vs last month</span></div>
     </div>
-    <div class="card">
-      <div class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="8" r="3.5"/><path d="M3.5 20c.6-3.6 3.3-5.5 6.5-5.5 1.5 0 2.9.4 4 1.2M15 17h6"/></svg>Churned customers</div>
+    <div class="card tile">
+      <div class="label">Customers who churned</div>
       <div class="num">33</div>
-      <span class="pill good">▼ −29.8%</span><span class="vs">vs September</span>
+      <div><span class="pill good">29.8% fewer vs last month</span></div>
     </div>
   </div>
 
-  <div class="mid">
-    <div class="card">
-      <h2>We gained 86 paying customers and lost 33</h2>
-      <div class="chart" role="img" aria-label="86 new paying customers, 27 on annual and 59 on monthly, against 33 churned. Net gain of 53.">
-        <div class="bar-row">
-          <span class="name">New paying</span>
-          <div class="track" style="width:100%">
-            <div class="seg clay" style="width:31.4%">27</div>
-            <div class="seg clay-2" style="width:68.6%">59</div>
-          </div>
-          <span class="val">86</span>
-        </div>
-        <div class="bar-row">
-          <span class="name">Churned</span>
-          <div class="track" style="width:38.4%"><div class="seg gray" style="width:100%"></div></div>
-          <span class="val">33</span>
-        </div>
-        <div class="bar-row">
-          <span class="name"><b>Net gain</b></span>
-          <div class="track" style="width:61.6%"><div class="seg clay" style="width:100%"></div></div>
-          <span class="val">+53</span>
-        </div>
-        <div class="legend">
-          <span><i style="background:var(--clay-strong)"></i><b>27</b> chose the new annual plan</span>
-          <span><i style="background:var(--clay);opacity:.55"></i><b>59</b> chose other plans</span>
-        </div>
-      </div>
-    </div>
-    <div class="side">
-      <div class="card">
-        <div class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>Visitors</div>
+  <section class="section">
+    <h2>51,600 visitors turned into 86 new paying customers</h2>
+    <div class="card funnel">
+      <div class="step">
+        <div class="label">Visitors</div>
         <div class="num">51,600</div>
-        <span class="pill good">▲ +7.9%</span><span class="vs">vs September</span>
+        <div class="bar"></div>
+        <span class="pill good" style="align-self:flex-start">+7.9% vs last month</span>
       </div>
-      <div class="card">
-        <div class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/></svg>Signups</div>
+      <div class="arrow">
+        <svg width="28" height="16" viewBox="0 0 28 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h22M18 2l6 6-6 6"/></svg>
+        <span><b>3.7%</b> signed up</span>
+      </div>
+      <div class="step">
+        <div class="label">Signups</div>
         <div class="num">1,930</div>
-        <span class="pill good">▲ +17.7%</span><span class="vs">vs September</span>
+        <div class="bar"></div>
+        <span class="pill good" style="align-self:flex-start">+17.7% vs last month</span>
+      </div>
+      <div class="arrow">
+        <svg width="28" height="16" viewBox="0 0 28 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h22M18 2l6 6-6 6"/></svg>
+        <span><b>4.5%</b> of signups started paying</span>
+      </div>
+      <div class="step end">
+        <div class="label">New paying customers</div>
+        <div class="num">86</div>
+        <div class="bar"></div>
+        <span class="pill good" style="align-self:flex-start">+34.4% vs last month</span>
       </div>
     </div>
-  </div>
+  </section>
 
-  <section>
-    <h2>4 things happened in October</h2>
-    <div class="events">
+  <section class="section">
+    <h2>What happened in October</h2>
+    <div class="happened">
+
       <div class="card event">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
-        <div>
-          <div class="head"><b>Annual plan launched</b><span class="pill good">Done</span></div>
-          <p><b>27 of 86</b> new paying customers chose annual. <span class="date">Oct 1</span></p>
+        <div class="event-head">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+          Annual plan · launched Oct 1
         </div>
+        <div class="big">27 of 86</div>
+        <div class="split" aria-label="27 of 86 chose annual"><span style="width:31.4%"></span></div>
+        <p><b>31%</b> of new paying customers chose the annual plan.</p>
       </div>
+
       <div class="card event">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/></svg>
-        <div>
-          <div class="head"><b>2 Google Ads campaigns paused</b><span class="pill good">Done</span></div>
-          <p>Saved about <b>$4k</b>. <span class="date">Oct 12</span></p>
+        <div class="event-head">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/></svg>
+          Google Ads · Oct 12
         </div>
+        <div class="big">~$4k saved</div>
+        <p>We <b>paused 2 campaigns</b> in Google Ads.</p>
       </div>
+
       <div class="card event">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5h16v11H9l-5 4V5z"/></svg>
-        <div>
-          <div class="head"><b>Support tickets down 18%</b><span class="pill good">Done</span></div>
-          <p>Since we moved the help center.</p>
+        <div class="event-head">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M4 5h16v11H9l-5 4z"/></svg>
+          Support tickets · since the help center move
         </div>
+        <div class="big">−18%</div>
+        <p>Support tickets are <b>down 18%</b> since we moved the help center.</p>
       </div>
+
       <div class="card event">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6l8 6 8-6M4 6h16v12H4z"/></svg>
-        <div>
-          <div class="head"><b>Onboarding email test</b><span class="pill watch">Still running</span></div>
-          <p>Day-7 activation <b>38% → 44%</b> so far.</p>
+        <div class="event-head">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M4 6l8 6 8-6M4 6h16v12H4z"/></svg>
+          Onboarding email test · <span class="pill watch">Still running</span>
         </div>
+        <div class="compare">
+          <div><span>Before</span><i style="width:38%"></i><b>38%</b></div>
+          <div class="after"><span>So far</span><i style="width:44%"></i><b>44%</b></div>
+        </div>
+        <p><b>Day-7 activation</b> is up 6 points so far.</p>
       </div>
+
     </div>
   </section>
 </div>

@@ -2,13 +2,12 @@
 <title>Northwind AI at Work</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
-/* Layout: persistent header line, one slide card at a time, nav bar under it. Noslop style kit. */
+/* Layout: slide deck, one idea per slide, header line on top, Back/Next at the bottom. Grenade style kit. */
 :root {
   --bg: #fff; --soft: #f9f9f9; --card: #fff;
   --text: rgba(0,0,0,.9); --text-2: rgba(0,0,0,.6); --text-3: rgba(0,0,0,.47);
   --line: rgba(0,0,0,.12); --shadow: 0 4px 20px rgba(0,0,0,.075);
-  --gray-mark: rgba(0,0,0,.16);
-  --clay: #d97757; --clay-strong: #c6613f;
+  --clay: #d97757; --clay-strong: #c6613f; --gray: rgba(0,0,0,.14);
   --good: #006c10; --good-bg: rgba(16,161,34,.14);
   --bad: #a42528; --bad-bg: rgba(220,60,61,.12);
   --watch: #794c02; --watch-bg: rgba(251,179,21,.16);
@@ -18,275 +17,254 @@
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #151515; --soft: #0b0b0b; --card: #1f1f1f;
   --text: rgba(255,255,255,.93); --text-2: rgba(255,255,255,.57); --text-3: rgba(255,255,255,.4);
-  --line: rgba(255,255,255,.12); --shadow: none; --gray-mark: rgba(255,255,255,.2);
+  --line: rgba(255,255,255,.12); --shadow: none; --gray: rgba(255,255,255,.16);
   --good: #53c556; --bad: #f17778; --watch: #e49c06; color-scheme: dark; } }
 :root[data-theme="dark"] {
   --bg: #151515; --soft: #0b0b0b; --card: #1f1f1f;
   --text: rgba(255,255,255,.93); --text-2: rgba(255,255,255,.57); --text-3: rgba(255,255,255,.4);
-  --line: rgba(255,255,255,.12); --shadow: none; --gray-mark: rgba(255,255,255,.2);
+  --line: rgba(255,255,255,.12); --shadow: none; --gray: rgba(255,255,255,.16);
   --good: #53c556; --bad: #f17778; --watch: #e49c06; color-scheme: dark; }
 
+html, body { height: 100%; }
 body { margin: 0; background: var(--soft); color: var(--text); font: 16px/1.55 var(--sans); }
 h1, h2 { font-family: var(--serif); font-weight: 400; margin: 0; text-wrap: balance; }
-h1 { font-size: 32px; line-height: 1.2; } h2 { font-size: 32px; line-height: 1.2; }
-.wrap { max-width: 980px; margin: 0 auto; padding-block: 8px 32px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-.meta { font-size: 13px; color: var(--text-2); border-bottom: 1px solid var(--line); padding: 12px 0; margin-bottom: 20px; }
-.meta b { color: var(--text); font-weight: 500; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 20px; }
+h1 { font-size: 32px; line-height: 1.2; }
+h2 { font-size: 22px; line-height: 1.3; }
 .num { font-size: 40px; font-weight: 500; line-height: 1; font-variant-numeric: tabular-nums; }
 .label { font-size: 13px; color: var(--text-2); }
 .pill { display: inline-block; border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 500; }
-.good { color: var(--good); background: var(--good-bg); } .watch { color: var(--watch); background: var(--watch-bg); }
+.watch { color: var(--watch); background: var(--watch-bg); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 20px; }
 button { font: 500 16px var(--sans); border-radius: 10px; padding: 10px 16px; cursor: pointer; background: var(--card); color: var(--text); border: 1px solid var(--line); }
 button.main { background: var(--clay-strong); color: #fff; border: 0; }
-button:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
 button:disabled { opacity: .4; cursor: default; }
+button:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
+b { font-weight: 600; }
 
-.deck { padding: 32px; min-height: 480px; display: flex; flex-direction: column; gap: 24px; }
-.slide { display: flex; flex-direction: column; gap: 24px; flex: 1; }
-.slide > p.say { margin: 0; color: var(--text-2); max-width: 62ch; }
-.visual { flex: 1; display: flex; align-items: center; }
-.row { display: flex; gap: 16px; flex-wrap: wrap; width: 100%; }
-.row > * { flex: 1 1 200px; min-width: 0; }
-.tile { background: var(--soft); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
-.tile.key .num { color: var(--clay-strong); }
-.nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; }
-.dots { display: flex; gap: 6px; }
-.dots button { width: 10px; height: 10px; padding: 0; border-radius: 50%; background: var(--gray-mark); border: 0; }
-.dots button[aria-current="true"] { background: var(--clay); }
+.wrap { max-width: 960px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; box-sizing: border-box;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 8px 20px; }
+.meta { font-size: 13px; color: var(--text-2); border-bottom: 1px solid var(--line); padding: 12px 0; }
+.meta b { color: var(--text); }
+.deck { flex: 1; display: flex; padding-top: 20px; }
+.slide { flex: 1; display: flex; flex-direction: column; gap: 28px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 36px; min-width: 0; }
+.slide .visual { flex: 1; display: flex; align-items: center; justify-content: center; min-width: 0; }
+.slide .say { color: var(--text-2); max-width: 62ch; }
+.slide .say b { color: var(--text); }
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 16px; }
 .count { font-size: 13px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+
+/* grids */
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; width: 100%; }
+.tile { border: 1px solid var(--line); border-radius: 14px; padding: 24px 20px; display: flex; flex-direction: column; gap: 10px; }
+.tile.hot .num { color: var(--clay-strong); }
+.work { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; width: 100%; }
+.work .tile { align-items: flex-start; }
+.ico { width: 32px; height: 32px; stroke: var(--clay); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.two { display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; width: 100%; align-items: center; }
+.chart { width: 100%; overflow-x: auto; }
 svg text { font-family: var(--sans); }
-.ico { width: 28px; height: 28px; stroke: var(--text-2); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.people { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; max-width: 360px; }
-.people svg { width: 100%; height: auto; stroke: var(--clay); fill: none; stroke-width: 1.6; }
-.eq { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.eq .op { font-size: 22px; color: var(--text-3); }
-.chips { display: flex; gap: 8px; flex-wrap: wrap; }
-.chip { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; font-size: 16px; }
-.chip .ico { width: 20px; height: 20px; }
-.contact { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-.contact code { font: 16px var(--sans); user-select: all; }
-.scroll { overflow-x: auto; width: 100%; }
-@media (max-width: 600px) {
-  .deck { padding: 20px; min-height: 0; }
-  h1, h2 { font-size: 22px; }
-  .eq .op { font-size: 16px; }
+.people { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; max-width: 360px; }
+.people span { aspect-ratio: 1; border-radius: 6px; background: var(--clay); opacity: .85; }
+.email { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.email code { font: 500 16px var(--sans); padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; user-select: all; }
+
+@media (max-width: 720px) {
+  .slide { padding: 22px; gap: 20px; }
+  .tiles, .two { grid-template-columns: 1fr; }
+  .work { grid-template-columns: 1fr 1fr; }
 }
-@media (prefers-reduced-motion: no-preference) { .slide { animation: in .25s ease-out; } }
-@keyframes in { from { opacity: .6; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: no-preference) { .slide { animation: in .25s ease-out; } @keyframes in { from { transform: translateY(6px); } to { transform: none; } } }
 </style>
 
 <div class="wrap">
-  <div class="meta">Proposal · October 30, 2026 · From <b>Sam Rivera</b> to <b>Mr. Alvarez, COO, Northwind Logistics</b> · <b>Your yes by November 20</b> to start January 12</div>
+  <div class="meta">Proposal · November 2026 · From <b>Sam Rivera</b> to <b>Mr. Alvarez, COO, Northwind Logistics</b> · <b>Your yes needed by Nov 20</b></div>
 
-  <main class="card deck" aria-live="polite">
+  <div class="deck">
 
     <!-- 1 -->
-    <section class="slide" id="s1">
-      <h1>40 of your managers can each get 4.5 hours back every week</h1>
-      <p class="say">"AI at work" is a 6-week program where your managers learn to use Claude on their own daily work.</p>
+    <section class="slide" data-n="1">
+      <h1>AI at work: a 6-week program for 40 Northwind managers</h1>
       <div class="visual">
-        <div class="row">
-          <div class="tile"><span class="num">6 weeks</span><span class="label">From January 12 to February 16</span></div>
-          <div class="tile"><span class="num">40</span><span class="label">Northwind managers</span></div>
-          <div class="tile key"><span class="num">4.5 h</span><span class="label">Saved per manager per week at our last 3 clients</span></div>
+        <div class="tiles">
+          <div class="tile"><div class="num">6 weeks</div><div class="label">Jan 12 to Feb 16</div></div>
+          <div class="tile"><div class="num">40</div><div class="label">of your managers</div></div>
+          <div class="tile hot"><div class="num">$24,000</div><div class="label">total, $600 per manager</div></div>
         </div>
       </div>
+      <p class="say">Your managers learn Claude on <b>their own work</b>: emails, reports, planning and spreadsheets.</p>
     </section>
 
     <!-- 2 -->
-    <section class="slide" id="s2" hidden>
-      <h2>Together, that would be about 180 hours a week across your managers</h2>
+    <section class="slide" data-n="2" hidden>
+      <h1>Each manager spends 9.5 hours with us over 6 weeks</h1>
       <div class="visual">
-        <div class="row" style="align-items:center">
-          <div class="people" aria-label="40 managers" id="people"></div>
-          <div class="eq">
-            <div><div class="num">40</div><div class="label">managers</div></div>
-            <span class="op">×</span>
-            <div><div class="num">4.5 h</div><div class="label">saved each week</div></div>
-            <span class="op">=</span>
-            <div><div class="num" style="color:var(--clay-strong)">180 h</div><div class="label">a week, every week</div></div>
-          </div>
+        <div class="chart">
+          <svg viewBox="0 0 640 250" width="100%" role="img" aria-label="Session length per week: 2 hours in week 1, then 90 minutes in weeks 2 to 6">
+            <line x1="40" y1="200" x2="620" y2="200" stroke="var(--line)"/>
+            <line x1="40" y1="100" x2="620" y2="100" stroke="var(--line)" stroke-dasharray="3 4"/>
+            <text x="34" y="204" font-size="13" fill="var(--text-3)" text-anchor="end">0h</text>
+            <text x="34" y="104" font-size="13" fill="var(--text-3)" text-anchor="end">1h</text>
+            <text x="34" y="24" font-size="13" fill="var(--text-3)" text-anchor="end">2h</text>
+            <!-- scale: 1h = 100px -->
+            <rect x="60" y="0" width="70" height="200" rx="6" fill="var(--clay)"/>
+            <rect x="157" y="50" width="70" height="150" rx="6" fill="var(--gray)"/>
+            <rect x="254" y="50" width="70" height="150" rx="6" fill="var(--gray)"/>
+            <rect x="351" y="50" width="70" height="150" rx="6" fill="var(--gray)"/>
+            <rect x="448" y="50" width="70" height="150" rx="6" fill="var(--gray)"/>
+            <rect x="545" y="50" width="70" height="150" rx="6" fill="var(--gray)"/>
+            <g font-size="13" fill="var(--text-2)" text-anchor="middle">
+              <text x="95" y="222">Week 1</text><text x="192" y="222">Week 2</text><text x="289" y="222">Week 3</text>
+              <text x="386" y="222">Week 4</text><text x="483" y="222">Week 5</text><text x="580" y="222">Week 6</text>
+              <text x="95" y="242">Jan 12</text><text x="192" y="242">Jan 19</text><text x="289" y="242">Jan 26</text>
+              <text x="386" y="242">Feb 2</text><text x="483" y="242">Feb 9</text><text x="580" y="242">Feb 16</text>
+            </g>
+            <g font-size="13" font-weight="600" fill="#fff" text-anchor="middle">
+              <text x="95" y="24">2h</text>
+            </g>
+            <g font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">
+              <text x="192" y="74">90 min</text><text x="289" y="74">90 min</text><text x="386" y="74">90 min</text><text x="483" y="74">90 min</text><text x="580" y="74">90 min</text>
+            </g>
+          </svg>
         </div>
       </div>
-      <p class="say">This is an estimate if Northwind matches the average of our last 3 clients.</p>
+      <p class="say"><b>Week 1</b> is a 2-hour live kickoff. <b>Weeks 2 to 6</b> are 90-minute hands-on sessions, once a week.</p>
     </section>
 
     <!-- 3 -->
-    <section class="slide" id="s3" hidden>
-      <h2>At our last 3 clients, the habit stuck after the program ended</h2>
+    <section class="slide" data-n="3" hidden>
+      <h1>Every session uses the work your managers already do</h1>
       <div class="visual">
-        <div class="row">
-          <div class="tile">
-            <svg viewBox="0 0 320 150" role="img" aria-label="Hours saved per week: 0 in week 1, 4.5 in week 6">
-              <line x1="20" y1="120" x2="300" y2="120" stroke="var(--line)"/>
-              <rect x="60" y="116" width="70" height="4" fill="var(--gray-mark)"/>
-              <rect x="190" y="30" width="70" height="90" rx="4" fill="var(--clay)"/>
-              <text x="95" y="106" text-anchor="middle" font-size="13" fill="var(--text-2)">baseline</text>
-              <text x="225" y="22" text-anchor="middle" font-size="16" font-weight="500" fill="var(--text)">4.5 h saved</text>
-              <text x="95" y="140" text-anchor="middle" font-size="13" fill="var(--text-2)">Week 1</text>
-              <text x="225" y="140" text-anchor="middle" font-size="13" fill="var(--text-2)">Week 6</text>
-            </svg>
-            <span class="label"><b>4.5 hours a week saved</b> on average, measured in week 1 and again in week 6</span>
-          </div>
-          <div class="tile">
-            <svg viewBox="0 0 320 150" role="img" aria-label="87 percent still use Claude daily">
-              <circle cx="160" cy="70" r="55" fill="none" stroke="var(--gray-mark)" stroke-width="14"/>
-              <circle cx="160" cy="70" r="55" fill="none" stroke="var(--clay)" stroke-width="14"
-                stroke-dasharray="300.6 345.6" transform="rotate(-90 160 70)" stroke-linecap="round"/>
-              <text x="160" y="80" text-anchor="middle" font-size="30" font-weight="500" fill="var(--text)">87%</text>
-            </svg>
-            <span class="label"><b>87% still use Claude daily</b> 3 months after the program</span>
-          </div>
+        <div class="work">
+          <div class="tile"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><h2>Emails</h2></div>
+          <div class="tile"><svg class="ico" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg><h2>Reports</h2></div>
+          <div class="tile"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><h2>Planning</h2></div>
+          <div class="tile"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16M15 4v16"/></svg><h2>Spreadsheets</h2></div>
         </div>
       </div>
+      <p class="say">Each manager builds <b>3 workflows</b> they keep using. That is <b>120 workflows</b> across your 40 managers.</p>
     </section>
 
     <!-- 4 -->
-    <section class="slide" id="s4" hidden>
-      <h2>Each manager spends 9.5 hours in sessions over 6 weeks</h2>
+    <section class="slide" data-n="4" hidden>
+      <h1>At our last 3 clients, managers saved 4.5 hours a week</h1>
       <div class="visual">
-        <div class="scroll">
-          <svg viewBox="0 0 640 210" style="min-width:520px;width:100%" role="img" aria-label="Session length per week">
-            <line x1="20" y1="150" x2="620" y2="150" stroke="var(--line)"/>
-            <g id="bars"></g>
-          </svg>
+        <div class="tiles">
+          <div class="tile hot"><div class="num">4.5 hours</div><div class="label">saved per manager per week, on average, week 1 vs week 6</div></div>
+          <div class="tile"><div class="num">180 hours</div><div class="label">a week across 40 managers, if Northwind sees the same average</div></div>
+          <div class="tile"><div class="num">3 clients</div><div class="label">our most recent programs, measured the same way</div></div>
         </div>
       </div>
-      <div class="chips" aria-label="Topics">
-        <span class="label" style="align-self:center">Every session uses their own work:</span>
-        <span class="chip"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Emails</span>
-        <span class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7"/></svg>Reports</span>
-        <span class="chip"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Planning</span>
-        <span class="chip"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M10 4v16"/></svg>Spreadsheets</span>
-      </div>
+      <p class="say">Measured for each manager in <b>week 1</b> and again in <b>week 6</b>, then averaged.</p>
     </section>
 
     <!-- 5 -->
-    <section class="slide" id="s5" hidden>
-      <h2>Your team leaves with 120 workflows they keep using</h2>
+    <section class="slide" data-n="5" hidden>
+      <h1>87% still use Claude every day, 3 months later</h1>
       <div class="visual">
-        <div class="eq">
-          <div><div class="num">40</div><div class="label">managers</div></div>
-          <span class="op">×</span>
-          <div><div class="num">3</div><div class="label">workflows each, built during the program</div></div>
-          <span class="op">=</span>
-          <div><div class="num" style="color:var(--clay-strong)">120</div><div class="label">workflows built on Northwind's real work</div></div>
+        <div class="two">
+          <div class="chart" style="display:flex;justify-content:center">
+            <svg viewBox="0 0 220 220" width="220" height="220" role="img" aria-label="87 percent of managers still use Claude daily 3 months after the program">
+              <circle cx="110" cy="110" r="84" fill="none" stroke="var(--gray)" stroke-width="26"/>
+              <circle cx="110" cy="110" r="84" fill="none" stroke="var(--clay)" stroke-width="26"
+                stroke-dasharray="459.2 527.8" transform="rotate(-90 110 110)"/>
+              <text x="110" y="122" text-anchor="middle" font-size="40" font-weight="500" fill="var(--text)">87%</text>
+            </svg>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <h2>Same 3 clients, checked 3 months after the last session</h2>
+            <p class="label" style="margin:0">Daily use of Claude by the managers who took the program.</p>
+          </div>
         </div>
       </div>
-      <p class="say">Managers build them in the sessions, so they are <b>ready to use on day one</b> after the program.</p>
+      <p class="say">The workflows are built on <b>their own tasks</b>, so they keep using them.</p>
     </section>
 
     <!-- 6 -->
-    <section class="slide" id="s6" hidden>
-      <h2>The program costs $24,000 for all 40 managers</h2>
+    <section class="slide" data-n="6" hidden>
+      <h1>The price is $24,000 for all 40 managers</h1>
       <div class="visual">
-        <div class="row">
-          <div class="tile key"><span class="num">$24,000</span><span class="label">Total price</span></div>
-          <div class="tile"><span class="num">$600</span><span class="label">Per manager</span></div>
-          <div class="tile"><span class="num">9.5 h</span><span class="label">Of live sessions per manager</span></div>
+        <div class="two">
+          <div class="people" aria-label="40 managers">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div class="label">40 managers × $600</div>
+            <div class="num" style="color:var(--clay-strong)">$24,000</div>
+            <div><span class="pill watch">Claude licenses not included</span></div>
+          </div>
         </div>
       </div>
-      <div><span class="pill watch">Claude licenses are not included in this price</span></div>
+      <p class="say">The price covers <b>the kickoff and all 5 hands-on sessions</b>. Northwind provides the Claude licenses.</p>
     </section>
 
     <!-- 7 -->
-    <section class="slide" id="s7" hidden>
-      <h2>Sign by November 20 and your managers start on January 12</h2>
+    <section class="slide" data-n="7" hidden>
+      <h1>Sign by Nov 20 and your managers start on Jan 12</h1>
       <div class="visual">
-        <div class="scroll">
-          <svg viewBox="0 0 640 130" style="min-width:520px;width:100%" role="img" aria-label="Timeline">
-            <line x1="40" y1="50" x2="600" y2="50" stroke="var(--gray-mark)" stroke-width="2"/>
-            <circle cx="40" cy="50" r="7" fill="var(--gray-mark)"/>
-            <circle cx="227" cy="50" r="10" fill="var(--clay)"/>
-            <circle cx="413" cy="50" r="7" fill="var(--gray-mark)"/>
-            <circle cx="600" cy="50" r="7" fill="var(--gray-mark)"/>
-            <text x="40" y="88" text-anchor="middle" font-size="16" fill="var(--text)">Oct 30</text>
-            <text x="40" y="108" text-anchor="middle" font-size="13" fill="var(--text-2)">Proposal sent</text>
-            <text x="227" y="88" text-anchor="middle" font-size="16" font-weight="500" fill="var(--text)">Nov 20</text>
-            <text x="227" y="108" text-anchor="middle" font-size="13" fill="var(--text-2)">Your decision</text>
-            <text x="413" y="88" text-anchor="middle" font-size="16" fill="var(--text)">Jan 12</text>
-            <text x="413" y="108" text-anchor="middle" font-size="13" fill="var(--text-2)">Live kickoff</text>
-            <text x="600" y="88" text-anchor="middle" font-size="16" fill="var(--text)">Feb 16</text>
-            <text x="600" y="108" text-anchor="middle" font-size="13" fill="var(--text-2)">Last session</text>
+        <div class="chart">
+          <svg viewBox="0 0 640 130" width="100%" role="img" aria-label="Timeline: today Nov 2, sign by Nov 20, kickoff Jan 12, last session Feb 16">
+            <line x1="40" y1="50" x2="600" y2="50" stroke="var(--line)" stroke-width="2"/>
+            <line x1="420" y1="50" x2="600" y2="50" stroke="var(--clay)" stroke-width="4"/>
+            <circle cx="40" cy="50" r="7" fill="var(--gray)"/>
+            <circle cx="160" cy="50" r="10" fill="var(--clay-strong)"/>
+            <circle cx="420" cy="50" r="7" fill="var(--clay)"/>
+            <circle cx="600" cy="50" r="7" fill="var(--clay)"/>
+            <g font-size="13" text-anchor="middle">
+              <text x="40" y="88" fill="var(--text-2)">Today</text><text x="40" y="106" fill="var(--text-3)">Nov 2</text>
+              <text x="160" y="88" fill="var(--text)" font-weight="600">You sign</text><text x="160" y="106" fill="var(--text-2)">by Nov 20</text>
+              <text x="420" y="88" fill="var(--text-2)">Kickoff</text><text x="420" y="106" fill="var(--text-3)">Jan 12</text>
+              <text x="600" y="88" fill="var(--text-2)">Last session</text><text x="600" y="106" fill="var(--text-3)">Feb 16</text>
+            </g>
           </svg>
         </div>
       </div>
-      <div class="contact">
-        <button class="main" id="copy" type="button">Copy Sam's email</button>
-        <span>Reply to <b>Sam Rivera</b> at <code id="email">sam@brightpath.example</code></span>
-        <span class="label" id="copied" role="status"></span>
+      <div class="card" style="display:flex;flex-direction:column;gap:12px">
+        <h2>To say yes, email Sam Rivera</h2>
+        <div class="email">
+          <code id="mail">sam@brightpath.example</code>
+          <button class="main" id="copy" type="button">Copy email</button>
+        </div>
       </div>
     </section>
 
-  </main>
+  </div>
 
-  <nav class="nav" aria-label="Slides">
-    <button id="prev" type="button">Back</button>
-    <div style="display:flex;align-items:center;gap:12px">
-      <div class="dots" id="dots"></div>
-      <span class="count" id="count"></span>
-    </div>
-    <button id="next" type="button" class="main">Next</button>
-  </nav>
+  <div class="nav">
+    <button id="back" type="button">Back</button>
+    <span class="count" id="count">1 of 7</span>
+    <button class="main" id="next" type="button">Next</button>
+  </div>
 </div>
 
 <script>
 (function () {
-  // 40 people
-  var p = document.getElementById('people'), html = '';
-  for (var i = 0; i < 40; i++) html += '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
-  p.innerHTML = html;
-
-  // session bars: week 1 = 2h, weeks 2-6 = 1.5h
-  var weeks = [['Week 1','Jan 12',2,'Kickoff'],['Week 2','Jan 19',1.5,''],['Week 3','Jan 26',1.5,''],['Week 4','Feb 2',1.5,''],['Week 5','Feb 9',1.5,''],['Week 6','Feb 16',1.5,'']];
-  var g = document.getElementById('bars'), s = '', scale = 55;
-  weeks.forEach(function (w, i) {
-    var x = 40 + i * 98, h = w[2] * scale, y = 150 - h, cx = x + 34;
-    var col = i === 0 ? 'var(--clay)' : 'var(--gray-mark)';
-    s += '<rect x="' + x + '" y="' + y + '" width="68" height="' + h + '" rx="4" fill="' + col + '"/>';
-    s += '<text x="' + cx + '" y="' + (y - 8) + '" text-anchor="middle" font-size="13" fill="var(--text)">' + (w[2] === 2 ? '2 h' : '90 min') + '</text>';
-    s += '<text x="' + cx + '" y="172" text-anchor="middle" font-size="13" fill="var(--text)">' + w[0] + '</text>';
-    s += '<text x="' + cx + '" y="192" text-anchor="middle" font-size="13" fill="var(--text-2)">' + (w[3] ? w[3] + ' · ' : '') + w[1] + '</text>';
-  });
-  g.innerHTML = s;
-
-  // deck
   var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
-  var dots = document.getElementById('dots'), cur = 0;
-  slides.forEach(function (_, i) {
-    var b = document.createElement('button');
-    b.type = 'button'; b.setAttribute('aria-label', 'Slide ' + (i + 1));
-    b.addEventListener('click', function () { go(i); });
-    dots.appendChild(b);
-  });
-  function go(i) {
-    cur = Math.max(0, Math.min(slides.length - 1, i));
-    slides.forEach(function (sl, j) { sl.hidden = j !== cur; });
-    Array.prototype.forEach.call(dots.children, function (d, j) { d.setAttribute('aria-current', j === cur ? 'true' : 'false'); });
-    document.getElementById('count').textContent = (cur + 1) + ' of ' + slides.length;
-    document.getElementById('prev').disabled = cur === 0;
-    var n = document.getElementById('next');
-    n.disabled = cur === slides.length - 1;
-    n.className = cur === slides.length - 1 ? '' : 'main';
+  var i = 0;
+  var back = document.getElementById('back'), next = document.getElementById('next'), count = document.getElementById('count');
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach(function (s, k) { s.hidden = k !== i; });
+    back.disabled = i === 0;
+    next.disabled = i === slides.length - 1;
+    count.textContent = (i + 1) + ' of ' + slides.length;
   }
-  document.getElementById('prev').addEventListener('click', function () { go(cur - 1); });
-  document.getElementById('next').addEventListener('click', function () { go(cur + 1); });
+  back.addEventListener('click', function () { show(i - 1); });
+  next.addEventListener('click', function () { show(i + 1); });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'ArrowRight') go(cur + 1);
-    if (e.key === 'ArrowLeft') go(cur - 1);
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') show(i + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') show(i - 1);
   });
-  go(0);
-
-  // copy
-  document.getElementById('copy').addEventListener('click', function () {
-    var t = document.getElementById('email').textContent, out = document.getElementById('copied');
-    function sel() { var r = document.createRange(); r.selectNodeContents(document.getElementById('email')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); out.textContent = 'Selected. Press Ctrl+C or Cmd+C.'; }
-    try {
-      navigator.clipboard.writeText(t).then(function () { out.textContent = 'Copied'; }, sel);
-    } catch (e) { sel(); }
+  var copy = document.getElementById('copy');
+  copy.addEventListener('click', function () {
+    var t = 'sam@brightpath.example';
+    function done() { copy.textContent = 'Copied'; setTimeout(function () { copy.textContent = 'Copy email'; }, 1600); }
+    function fallback() { var r = document.createRange(); r.selectNodeContents(document.getElementById('mail')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+    try { navigator.clipboard.writeText(t).then(done, fallback); } catch (e) { fallback(); }
   });
+  show(0);
 })();
 </script>
 
