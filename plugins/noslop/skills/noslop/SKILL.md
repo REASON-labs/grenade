@@ -56,7 +56,6 @@ When a job mixes two, lead with the main one.
 8. **The first screen stands alone.** Someone who reads only what shows before scrolling knows what this is, the point, the 2 or 3 reasons behind it, and what to do. It holds the header line, the title, the ask, and one main visual or at most 4 numbers, with the reasons as short labeled items. Aim for 50 to 120 words on it, the header line not counted. Under 50 usually means you hid the reasons; over 120 means walls of text. Never stretch it to the window's height or pad it with empty space: it ends where its content ends. Only a cheat sheet, made for looking things up, can hold more.
 9. **Cut, don't hide.** Moving text into a tab or a row that opens is not cutting it. Only reference detail goes one click away: the full table, the FAQ, the method. The reasons, the risks that change the answer, the owner and the next step stay in view.
 10. **Say each thing once.** Each number appears once in view, not in the title, a tile and a list. Each list appears once: the same 12 emails as a calendar and again as a table is one too many. Pick the one view that answers the reader's question. Totals add up. Cards side by side hold about the same amount, so none is half empty. Labels that sit together use the same unit (58%, 9%, 33%, not "a third").
-11. **Nothing spills out of its box.** You can't see the page you build, so use layouts that can't break. No grid with more than 6 columns: a week of 10 days becomes a list or a timeline that wraps. Never a pill, a tag or `white-space: nowrap` inside a box narrower than 200px. A number in a tile fits on one line at every width ("$400", with "was $200" as its tag, never "$200 → $400"). Every box grows with its content. Picture it at 1440px and at 400px wide: if any text could overflow, overlap or wrap mid-number, change the layout.
 
 ## 4. Slop signs
 
@@ -130,6 +129,7 @@ Start every page from this. Add only what the page needs.
 - **Sizes:** only 5. 40px big numbers, 32px title, 22px section headings, 16px text, 13px labels.
 - **Charts:** inline SVG or Chart.js. The bar or line that matters in clay, the rest in gray.
 - **Icons:** simple line icons drawn in SVG, in gray or clay. Never emoji.
+- **Nothing spills out of its box.** You can't see the page you build, so use layouts that can't break. No grid with more than 6 columns: a week of 10 days becomes a list or a timeline that wraps. Never a pill, a tag or `white-space: nowrap` inside a box narrower than 200px. A number in a tile fits on one line at every width ("$400", with "was $200" as its tag, never "$200 → $400"). Every box grows with its content. Picture it at 1440px and at 400px wide: if any text could overflow, overlap or wrap mid-number, change the layout.
 
 ```css
 :root {
