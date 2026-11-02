@@ -42,10 +42,11 @@ When a job mixes two, lead with the main one.
 4. **Simple is not empty.** Use simple words, but keep every detail the reader needs to act: amounts, limits, dates, names, who approves, exceptions, examples, links. A guide lets someone do the whole thing without asking anyone. A policy or a process shows its owner, its start date and who to ask. Every number that changed says what it's compared to, in a short tag: "+$1,043 vs September", never "+$1,043". Detail the reader needs, but not at first glance, goes one click away (a row that opens, or a tab on a dashboard): kept, but never on the first screen.
 5. **No walls of text, no subtext.** 2 lines per paragraph at most. 10 words per table cell at most. More than 6 rows of sentences? Split them into cards by topic. Bold the word that matters in each line. Each thing gets one label, never a label plus a note: no caption under a number, no helper line under a card title or a heading. If it needs the note to make sense, change the label. Small grey text is still text: legends, roles, owner and date lines under items. Keep only what the reader acts on.
 6. **Look like Claude.** People already know Claude's look, so a new one makes them work. Use the style kit below: Claude's colors, its 2 fonts, its cards and its buttons. Claude's clay is the only accent, for the main button and the one thing to look at. Green, red and amber only mean good, bad and watch.
-7. **One place to start.** The biggest thing on the screen is the most important thing. The eye knows where to go first, second, third. Never one long scroll. A report, a decision page or a proposal fits about 2 screens and reads top to bottom, with no tabs: if it doesn't fit, cut more. Tabs belong only on a dashboard or a reference page, for reference detail. A guide uses steps; a pitch uses slides.
+7. **One place to start.** The biggest thing on the screen is the most important thing. The eye knows where to go first, second, third. Never one long scroll. A report, a decision page or a proposal fits about 2 screens and reads top to bottom, with no tabs: if it doesn't fit, cut more. Tabs belong only on a dashboard or a reference page, for reference detail. **Hard limits on every page:** at most 4 sections under the first screen, at most 5 items in a card or a list, at most 1 table. More than that? Keep what the reader acts on this week, and cut the rest. A guide uses steps; a pitch uses slides.
 8. **The first screen stands alone.** Someone who reads only what shows before scrolling knows what this is, the point, the 2 or 3 reasons behind it, and what to do. It holds the header line, the title, the ask, and one main visual or at most 4 numbers, with the reasons as short labeled items. Aim for 50 to 120 words on it, the header line not counted. Under 50 usually means you hid the reasons; over 120 means walls of text. Never stretch it to the window's height or pad it with empty space: it ends where its content ends. Only a cheat sheet, made for looking things up, can hold more.
 9. **Cut, don't hide.** Moving text into a tab or a row that opens is not cutting it. Only reference detail goes one click away: the full table, the FAQ, the method. The reasons, the risks that change the answer, the owner and the next step stay in view.
-10. **Say each thing once.** Each number appears once in view, not in the title, a tile and a list. Totals add up. Cards side by side hold about the same amount, so none is half empty. Labels that sit together use the same unit (58%, 9%, 33%, not "a third").
+10. **Say each thing once.** Each number appears once in view, not in the title, a tile and a list. Each list appears once: the same 12 emails as a calendar and again as a table is one too many. Pick the one view that answers the reader's question. Totals add up. Cards side by side hold about the same amount, so none is half empty. Labels that sit together use the same unit (58%, 9%, 33%, not "a third").
+11. **Nothing spills out of its box.** You can't see the page you build, so use layouts that can't break. No grid with more than 6 columns: a week of 10 days becomes a list or a timeline that wraps. Never a pill, a tag or `white-space: nowrap` inside a box narrower than 200px. A number in a tile fits on one line at every width ("$400", with "was $200" as its tag, never "$200 → $400"). Every box grows with its content. Picture it at 1440px and at 400px wide: if any text could overflow, overlap or wrap mid-number, change the layout.
 
 ## 4. Slop signs
 
@@ -70,6 +71,9 @@ Never ship a page with these:
 - A look that isn't Claude's: blue buttons, new fonts, many text sizes, gradients, emoji as icons.
 - One long scroll that tries to hold everything.
 - Badges, pills or numbers (01, 02, 03) that carry no information.
+- Text or pills spilling out of their boxes, a big number broken onto 2 lines, a grid of 10 narrow columns.
+- The same list shown twice: a calendar and a table, cards and a table.
+- More than 4 sections, cards with 6+ items, or 2+ tables: a dossier, not a page.
 - A "fixed" page that looks like the old one: same sections, same order, same boxes.
 
 ## 5. Fixing an artifact
@@ -82,7 +86,7 @@ You got a page: a link, a file, code or a screenshot. Start from its reader, not
    - **It fails any check in section 6, or uses the wrong form for the job:** rebuild it. This is the usual case.
    - **It passes every check but one or two small ones:** fix only those, and keep its layout.
    - **It passes every check:** say so. Suggest at most 3 small changes, and change nothing unless they say yes.
-4. To rebuild, follow this whole page from section 1, as if the old page didn't exist. Pick the form from the job, even if the old page used another one. Don't copy its sections, order, boxes or tabs. Cutting is the job: delete what repeats a visual, says the obvious or explains the page. The new page has about half the words of the old one or fewer, counting what's behind tabs. Keep every fact the reader needs to act, and keep the reasons in view.
+4. To rebuild, follow this whole page from section 1, as if the old page didn't exist. Pick the form from the job, even if the old page used another one. Don't copy its sections, order, boxes or tabs. Cutting is the job: delete what repeats a visual, says the obvious or explains the page. The new page has about half the words of the old one or fewer, counting what's behind tabs, and it keeps the hard limits of rule 7: 4 sections, 5 items per card, 1 table. Keep every fact the reader needs to act, and keep the reasons in view.
 5. If a stranger would call it the same page, rebuild again.
 6. Check every number, count and claim against the old page. A rebuild must not make a fact wrong.
 
@@ -97,6 +101,8 @@ Read it as the person from step 1, with zero context:
 - Does every visual show numbers or labels you can read?
 - Did you cut about half the words, not just move them? Does each number appear once, and does every total add up?
 - Is there any note under a number, a heading or a card title? Cut it.
+- At most 4 sections, 5 items per card, 1 table? Does any list appear twice?
+- Picture it at 1440px and at 400px. Could any pill, label or number spill out of its box or break onto 2 lines?
 - Does the top say what this is and who it's from, and does the ask stand out: what, by when, how to answer?
 - Read every heading out loud. Is it a normal sentence?
 - Is every detail there that they need to act without asking anyone?

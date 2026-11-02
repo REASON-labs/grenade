@@ -1,6 +1,6 @@
 {
   "name": "noslop",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Makes or fixes Claude artifacts so anyone understands them in 5 seconds.",
   "author": { "name": "Ruben Hassid (How to AI)", "email": "me@rubenhassid.ai" },
   "homepage": "https://github.com/rubenhassid1/grenade",
