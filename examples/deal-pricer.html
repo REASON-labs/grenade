@@ -1,0 +1,326 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Team Plan Deal Pricer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: one-screen tool. Inputs card left, big answer right, rules strip below. */
+:root {
+  --bg: #fff; --soft: #f9f9f9; --card: #fff;
+  --text: rgba(0,0,0,.9); --text-2: rgba(0,0,0,.6); --text-3: rgba(0,0,0,.47);
+  --line: rgba(0,0,0,.12); --shadow: 0 4px 20px rgba(0,0,0,.075);
+  --clay: #d97757; --clay-strong: #c6613f; --track: rgba(0,0,0,.08);
+  --good: #006c10; --good-bg: rgba(16,161,34,.14);
+  --bad: #a42528; --bad-bg: rgba(220,60,61,.12);
+  --watch: #794c02; --watch-bg: rgba(251,179,21,.16);
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #151515; --soft: #0b0b0b; --card: #1f1f1f;
+  --text: rgba(255,255,255,.93); --text-2: rgba(255,255,255,.57); --text-3: rgba(255,255,255,.4);
+  --line: rgba(255,255,255,.12); --shadow: none; --track: rgba(255,255,255,.1);
+  --good: #53c556; --bad: #f17778; --watch: #e49c06; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #151515; --soft: #0b0b0b; --card: #1f1f1f;
+  --text: rgba(255,255,255,.93); --text-2: rgba(255,255,255,.57); --text-3: rgba(255,255,255,.4);
+  --line: rgba(255,255,255,.12); --shadow: none; --track: rgba(255,255,255,.1);
+  --good: #53c556; --bad: #f17778; --watch: #e49c06; color-scheme: dark; }
+
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.55 var(--sans); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 0 32px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 20px; }
+h1, h2 { font-family: var(--serif); font-weight: 400; margin: 0; text-wrap: balance; }
+h1 { font-size: 32px; line-height: 1.2; } h2 { font-size: 22px; line-height: 1.3; }
+.meta { font-size: 13px; color: var(--text-2); border-bottom: 1px solid var(--line); padding: 12px 0; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 20px; min-width: 0; }
+.num { font-size: 40px; font-weight: 500; line-height: 1; font-variant-numeric: tabular-nums; }
+.pill { display: inline-block; border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 500; }
+.good { color: var(--good); background: var(--good-bg); } .bad { color: var(--bad); background: var(--bad-bg); } .watch { color: var(--watch); background: var(--watch-bg); }
+button { font: 500 16px var(--sans); border-radius: 10px; padding: 10px 16px; cursor: pointer; background: var(--card); color: var(--text); border: 1px solid var(--line); }
+button.main { background: var(--clay-strong); color: #fff; border: 0; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
+input { font: 16px var(--sans); background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+
+.lead { font-size: 16px; color: var(--text-2); margin: 6px 0 0; }
+.grid { display: grid; grid-template-columns: 360px 1fr; gap: 20px; align-items: start; }
+@media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+
+/* inputs */
+.inputs { display: flex; flex-direction: column; gap: 22px; }
+.field { display: flex; flex-direction: column; gap: 8px; }
+.label { font-size: 13px; color: var(--text-2); font-weight: 500; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+#seats { width: 110px; font-variant-numeric: tabular-nums; }
+.chips button { padding: 6px 12px; font-size: 13px; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 3px; gap: 3px; }
+.seg button { border: 0; background: transparent; padding: 8px; font-size: 16px; color: var(--text-2); }
+.seg button[aria-pressed="true"] { background: var(--card); color: var(--text); box-shadow: var(--shadow); outline: 1px solid var(--line); }
+.hint { font-size: 13px; color: var(--text-2); }
+.hint b { color: var(--text); }
+#extra { width: 76px; font-variant-numeric: tabular-nums; }
+input[type=range] { width: 100%; accent-color: var(--clay-strong); padding: 0; border: 0; background: transparent; }
+.zones { display: grid; grid-template-columns: 10fr 10fr 5fr; gap: 3px; font-size: 13px; }
+.zones div { border-radius: 6px; padding: 4px 6px; line-height: 1.3; }
+.check { display: flex; gap: 10px; align-items: center; font-size: 16px; }
+.check input { width: 18px; height: 18px; accent-color: var(--clay-strong); }
+
+/* answer */
+.answer { display: flex; flex-direction: column; gap: 18px; }
+.top { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+.big { font-size: 40px; font-weight: 500; line-height: 1; font-variant-numeric: tabular-nums; color: var(--clay-strong); }
+.status { display: flex; align-items: center; gap: 8px; font-size: 16px; padding: 10px 14px; border-radius: 10px; }
+.status svg { flex: none; }
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 520px) { .tiles { grid-template-columns: 1fr; } }
+.tile { background: var(--soft); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.tile .v { font-size: 22px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.bars { display: flex; flex-direction: column; gap: 8px; }
+.bar { display: grid; grid-template-columns: 150px 1fr 96px; gap: 10px; align-items: center; font-size: 13px; }
+@media (max-width: 520px) { .bar { grid-template-columns: 96px 1fr 80px; } }
+.bar .t { height: 12px; background: var(--track); border-radius: 6px; overflow: hidden; }
+.bar .f { height: 100%; background: var(--text-3); border-radius: 6px; transition: width .25s; }
+.bar.final .f { background: var(--clay); }
+.bar .n { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-2); }
+.bar.final .n { color: var(--text); font-weight: 500; }
+.email { background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 14px; font-size: 13px; white-space: pre-wrap; line-height: 1.6; max-height: 230px; overflow: auto; user-select: all; }
+.emailhead { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+/* rules */
+.rules { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+@media (max-width: 860px) { .rules { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 460px) { .rules { grid-template-columns: 1fr; } }
+.rule { display: flex; gap: 12px; align-items: flex-start; font-size: 13px; color: var(--text-2); padding: 14px; }
+.rule b { display: block; color: var(--text); font-size: 16px; font-weight: 500; }
+.rule svg { flex: none; margin-top: 2px; }
+@media (prefers-reduced-motion: reduce) { .bar .f { transition: none; } }
+</style>
+
+<div class="wrap">
+  <div class="meta">Deal pricing tool · Team plan · From Alex to the sales team · Rules as of October 30, 2026 · Use it on every call</div>
+
+  <div>
+    <h1>Price a deal and copy the quote for your client</h1>
+    <p class="lead">Set seats, billing and any extra discount. Volume discount and onboarding apply on their own.</p>
+  </div>
+
+  <div class="grid">
+    <section class="card inputs" aria-label="Deal inputs">
+      <div class="field">
+        <label class="label" for="seats">Number of seats (minimum 5)</label>
+        <div class="row">
+          <input id="seats" type="number" min="1" step="1" value="60" inputmode="numeric">
+          <div class="row chips" role="group" aria-label="Quick seat counts">
+            <button type="button" data-seats="10">10</button>
+            <button type="button" data-seats="50">50</button>
+            <button type="button" data-seats="100">100</button>
+            <button type="button" data-seats="200">200</button>
+          </div>
+        </div>
+        <div class="hint" id="volHint"></div>
+      </div>
+
+      <div class="field">
+        <span class="label" id="planLabel">Billing</span>
+        <div class="seg" role="group" aria-labelledby="planLabel">
+          <button type="button" id="planMonthly" aria-pressed="false">Monthly</button>
+          <button type="button" id="planAnnual" aria-pressed="true">Annual</button>
+        </div>
+        <div class="hint" id="planHint"></div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="extra">Extra discount you want to give (%)</label>
+        <div class="row">
+          <input id="extra" type="number" min="0" max="100" step="1" value="5">
+          <input id="extraRange" type="range" min="0" max="25" step="1" value="5" aria-label="Extra discount slider" style="flex:1;min-width:140px">
+        </div>
+        <div class="zones">
+          <div class="good">0 to 10%: your call</div>
+          <div class="watch">11 to 20%: ask Sam</div>
+          <div class="bad">Over 20%: not allowed</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="check"><input id="onb" type="checkbox" checked> Include onboarding package</label>
+        <div class="hint" id="onbHint"></div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="client">Client first name (for the email)</label>
+        <input id="client" type="text" placeholder="e.g. Maria">
+      </div>
+    </section>
+
+    <section class="card answer" aria-live="polite" aria-label="Quote">
+      <div class="top">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span class="label">Total per year</span>
+          <span class="big" id="total"></span>
+          <span class="hint" id="firstYear"></span>
+        </div>
+        <div class="status" id="status"></div>
+      </div>
+
+      <div class="tiles">
+        <div class="tile"><span class="label">Per month</span><span class="v" id="perMonth"></span></div>
+        <div class="tile"><span class="label">Per seat, per month</span><span class="v" id="perSeat"></span></div>
+        <div class="tile"><span class="label">Onboarding</span><span class="v" id="onbVal"></span></div>
+      </div>
+
+      <div class="bars" id="bars" aria-label="Price per seat per year, before and after discounts"></div>
+
+      <div class="field">
+        <div class="emailhead">
+          <span class="label">Email to the client · quote valid until <b id="validUntil" style="color:var(--text)"></b></span>
+          <button class="main" type="button" id="copy">Copy email</button>
+        </div>
+        <div class="email" id="email" tabindex="0"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="rules">
+    <div class="card rule">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.6" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.2c3 .2 5.5 2.6 5.5 5.8"/></svg>
+      <div><b>Minimum 5 seats</b>Below 5, there is no quote.</div>
+    </div>
+    <div class="card rule">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.6" stroke-linecap="round"><path d="M4 20V10M10 20V6M16 20v-8M22 20H2"/></svg>
+      <div><b>Volume discount is automatic</b>50+ seats: 10% off. 200+ seats: 15% off.</div>
+    </div>
+    <div class="card rule">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      <div><b>Onboarding $1,500 one-time</b>Free for 100+ seats.</div>
+    </div>
+    <div class="card rule">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <div><b>Quotes are valid 30 days</b>After that, re-run the price here.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const MONTHLY = 69, ANNUAL = 690, ONB = 1500, MIN = 5;
+const $ = id => document.getElementById(id);
+let plan = 'annual';
+
+function money(n) {
+  const r = Math.round(n * 100) / 100;
+  const whole = Math.abs(r - Math.round(r)) < 0.005;
+  return '$' + r.toLocaleString('en-US', { minimumFractionDigits: whole ? 0 : 2, maximumFractionDigits: 2 });
+}
+function volRate(s) { return s >= 200 ? 0.15 : s >= 50 ? 0.10 : 0; }
+
+// Pure pricing function. Discounts stack: volume first, then the rep's extra discount on top.
+function price(seats, plan, extraPct, withOnb) {
+  const listYear = plan === 'annual' ? ANNUAL : MONTHLY * 12;
+  const vol = volRate(seats);
+  const extra = extraPct / 100;
+  const afterVol = listYear * (1 - vol);
+  const seatYear = afterVol * (1 - extra);
+  const total = seatYear * seats;
+  const onb = !withOnb ? null : seats >= 100 ? 0 : ONB;
+  let approval = 'ok';
+  if (seats < MIN) approval = 'min';
+  else if (extraPct > 20) approval = 'no';
+  else if (extraPct > 10) approval = 'sam';
+  return { listYear, vol, afterVol, seatYear, total, perMonth: total / 12, perSeatMonth: seatYear / 12, onb, approval };
+}
+
+const icons = {
+  ok: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>',
+  sam: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  no: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg>'
+};
+
+function render() {
+  let seats = Math.floor(Number($('seats').value) || 0);
+  let extra = Math.max(0, Math.min(100, Number($('extra').value) || 0));
+  const withOnb = $('onb').checked;
+  const p = price(seats, plan, extra, withOnb);
+  const blocked = p.approval === 'min' || p.approval === 'no';
+
+  // hints
+  const nextTier = seats < 50 ? `Add ${50 - seats} seats to reach 10% off.` : seats < 200 ? `Add ${200 - seats} seats to reach 15% off.` : '';
+  $('volHint').innerHTML = p.vol ? `<b>${p.vol * 100}% volume discount</b> applied. ${nextTier}` : seats >= MIN ? `No volume discount yet. ${nextTier}` : '';
+  const save = (MONTHLY * 12 - ANNUAL) * (1 - p.vol) * (1 - extra / 100) * seats;
+  $('planHint').innerHTML = plan === 'annual'
+    ? `Pay 10 months, get 12. Client saves <b>${money(save)}</b> a year vs monthly.`
+    : `Switching to annual would save the client <b>${money(save)}</b> a year.`;
+  $('onbHint').innerHTML = !withOnb ? 'Not in this quote.' : seats >= 100 ? '<b>Free</b> at 100+ seats.' : '<b>$1,500</b> one-time. Free at 100+ seats.';
+
+  // status
+  const st = $('status');
+  if (p.approval === 'ok') { st.className = 'status good'; st.innerHTML = icons.ok + 'No approval needed. Send it.'; }
+  else if (p.approval === 'sam') { st.className = 'status watch'; st.innerHTML = icons.sam + 'Get Sam\'s approval before sending'; }
+  else if (p.approval === 'no') { st.className = 'status bad'; st.innerHTML = icons.no + 'Extra discount over 20% is not allowed'; }
+  else { st.className = 'status bad'; st.innerHTML = icons.no + 'Minimum is 5 seats'; }
+
+  // numbers
+  $('total').textContent = seats >= MIN ? money(p.total) : '-';
+  $('perMonth').textContent = seats >= MIN ? money(p.perMonth) : '-';
+  $('perSeat').textContent = money(p.perSeatMonth);
+  $('onbVal').textContent = p.onb === null ? 'Not included' : p.onb === 0 ? 'Free' : money(p.onb);
+  $('firstYear').innerHTML = seats >= MIN && p.onb ? `First year with onboarding: <b>${money(p.total + p.onb)}</b>` : plan === 'monthly' ? 'Billed monthly, shown as 12 months' : 'Billed once a year';
+
+  // bars: per seat per year
+  const rows = [
+    ['List price per seat', p.listYear],
+    [`After volume (${p.vol * 100}%)`, p.afterVol],
+    [`After your extra (${extra}%)`, p.seatYear]
+  ];
+  $('bars').innerHTML = '<span class="label">Price per seat, per year</span>' + rows.map((r, i) =>
+    `<div class="bar${i === 2 ? ' final' : ''}"><span>${r[0]}</span><div class="t"><div class="f" style="width:${(r[1] / p.listYear * 100).toFixed(1)}%"></div></div><span class="n">${money(r[1])}</span></div>`
+  ).join('');
+
+  // validity
+  const d = new Date(); d.setDate(d.getDate() + 30);
+  const until = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  $('validUntil').textContent = until;
+
+  // email
+  const name = $('client').value.trim() || '[name]';
+  const discounts = [];
+  if (p.vol) discounts.push(`${p.vol * 100}% volume discount`);
+  if (extra) discounts.push(`${extra}% additional discount`);
+  const onbLine = p.onb === null ? '' : p.onb === 0 ? '\n- Onboarding package: included at no cost' : `\n- Onboarding package: ${money(p.onb)} one-time`;
+  const firstLine = p.onb ? `\n- First-year total: ${money(p.total + p.onb)}` : '';
+  $('email').textContent = blocked ? (p.approval === 'min'
+      ? 'The Team plan starts at 5 seats. Raise the seat count to build a quote.'
+      : 'Extra discounts above 20% are not allowed. Lower the discount to build a quote.')
+    : `Hi ${name},
+
+Thanks for your time today. Here is your quote for ${seats} seats on the Team plan, billed ${plan === 'annual' ? 'annually (pay for 10 months, get 12)' : 'monthly'}.
+
+- Price per seat: ${money(p.perSeatMonth)} per month
+- ${plan === 'annual' ? 'Annual payment' : 'Monthly payment'}: ${plan === 'annual' ? money(p.total) : money(p.perMonth)}
+- Total per year: ${money(p.total)}${onbLine}${firstLine}
+${discounts.length ? '\nThis price includes a ' + discounts.join(' and a ') + '.\n' : ''}
+This quote is valid until ${until}. Reply to this email and I will send the order form.
+
+Best,`;
+  $('copy').disabled = blocked;
+  $('copy').textContent = p.approval === 'sam' ? 'Copy email (after Sam says yes)' : 'Copy email';
+}
+
+$('seats').addEventListener('input', render);
+document.querySelectorAll('[data-seats]').forEach(b => b.addEventListener('click', () => { $('seats').value = b.dataset.seats; render(); }));
+$('extra').addEventListener('input', () => { $('extraRange').value = Math.min(25, Number($('extra').value) || 0); render(); });
+$('extraRange').addEventListener('input', () => { $('extra').value = $('extraRange').value; render(); });
+$('onb').addEventListener('change', render);
+$('client').addEventListener('input', render);
+function setPlan(v) { plan = v; $('planAnnual').setAttribute('aria-pressed', v === 'annual'); $('planMonthly').setAttribute('aria-pressed', v === 'monthly'); render(); }
+$('planAnnual').addEventListener('click', () => setPlan('annual'));
+$('planMonthly').addEventListener('click', () => setPlan('monthly'));
+$('copy').addEventListener('click', () => {
+  const txt = $('email').textContent, btn = $('copy'), label = btn.textContent;
+  const done = () => { btn.textContent = 'Copied'; setTimeout(() => btn.textContent = label, 1500); };
+  const fallback = () => { const r = document.createRange(); r.selectNodeContents($('email')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selected, press Ctrl+C'; setTimeout(() => btn.textContent = label, 2500); };
+  try { navigator.clipboard.writeText(txt).then(done, fallback); } catch (e) { fallback(); }
+});
+render();
+</script>
+
+</body></html>

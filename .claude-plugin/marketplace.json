@@ -13,8 +13,8 @@
       "description": "Makes or fixes Claude artifacts so anyone understands them in 5 seconds.",
       "version": "1.3.0",
       "author": { "name": "Ruben Hassid (How to AI)", "email": "me@rubenhassid.ai" },
-      "homepage": "https://github.com/rubenhassid1/noslop",
-      "repository": "https://github.com/rubenhassid1/noslop",
+      "homepage": "https://github.com/rubenhassid1/grenade",
+      "repository": "https://github.com/rubenhassid1/grenade",
       "license": "MIT",
       "category": "productivity",
       "keywords": ["artifacts", "design", "writing", "slop"]

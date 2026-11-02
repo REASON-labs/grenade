@@ -129,7 +129,7 @@ input, select, textarea { font: 16px var(--sans); background: var(--card); color
 To make one, add your notes or files to the chat, then:
 
 ```
-Make an HTML page about [YOUR TOPIC] for [WHO WILL READ IT]. Follow github.com/rubenhassid1/noslop
+Make an HTML page about [YOUR TOPIC] for [WHO WILL READ IT]. Follow github.com/rubenhassid1/grenade
 ```
 
 Say "HTML page", or Claude may turn it into a plain doc.
@@ -137,7 +137,9 @@ Say "HTML page", or Claude may turn it into a plain doc.
 To fix one, add the page to the chat, then:
 
 ```
-Fix this artifact. Follow github.com/rubenhassid1/noslop
+Fix this artifact. Follow github.com/rubenhassid1/grenade
 ```
+
+See 7 pages made this way, for a sample company: [decision page](https://rubenhassid1.github.io/grenade/examples/decision-page.html) · [monthly report](https://rubenhassid1.github.io/grenade/examples/monthly-report.html) · [dashboard](https://rubenhassid1.github.io/grenade/examples/hiring-dashboard.html) · [step-by-step guide](https://rubenhassid1.github.io/grenade/examples/expense-guide.html) · [slides](https://rubenhassid1.github.io/grenade/examples/pitch-slides.html) · [tool](https://rubenhassid1.github.io/grenade/examples/deal-pricer.html) · [cheat sheet](https://rubenhassid1.github.io/grenade/examples/support-cheat-sheet.html). And a fix: [before](https://rubenhassid1.github.io/grenade/examples/sloppy-dashboard.html) → [after](https://rubenhassid1.github.io/grenade/examples/fixed-dashboard.html).
 
 Made by [Ruben Hassid](https://ruben.substack.com) · MIT license · Thanks to [unslop](https://github.com/heydamir/unslop) by Damir Sokolovsky for three ideas

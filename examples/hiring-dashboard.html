@@ -1,0 +1,263 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Hiring Pipeline Status</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: header line, title, 4 number tiles, one action card, then 3 tabs (this week, by role, all candidates). Style kit: noslop. */
+:root {
+  --bg: #fff; --soft: #f9f9f9; --card: #fff;
+  --text: rgba(0,0,0,.9); --text-2: rgba(0,0,0,.6); --text-3: rgba(0,0,0,.47);
+  --line: rgba(0,0,0,.12); --track: rgba(0,0,0,.07); --shadow: 0 4px 20px rgba(0,0,0,.075);
+  --clay: #d97757; --clay-strong: #c6613f; --clay-bg: rgba(217,119,87,.14);
+  --good: #006c10; --good-bg: rgba(16,161,34,.14);
+  --bad: #a42528; --bad-bg: rgba(220,60,61,.12);
+  --watch: #794c02; --watch-bg: rgba(251,179,21,.16);
+  --gray-bar: rgba(0,0,0,.22);
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #151515; --soft: #0b0b0b; --card: #1f1f1f;
+  --text: rgba(255,255,255,.93); --text-2: rgba(255,255,255,.57); --text-3: rgba(255,255,255,.4);
+  --line: rgba(255,255,255,.12); --track: rgba(255,255,255,.08); --shadow: none;
+  --good: #53c556; --bad: #f17778; --watch: #e49c06; --gray-bar: rgba(255,255,255,.28);
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #151515; --soft: #0b0b0b; --card: #1f1f1f;
+  --text: rgba(255,255,255,.93); --text-2: rgba(255,255,255,.57); --text-3: rgba(255,255,255,.4);
+  --line: rgba(255,255,255,.12); --track: rgba(255,255,255,.08); --shadow: none;
+  --good: #53c556; --bad: #f17778; --watch: #e49c06; --gray-bar: rgba(255,255,255,.28);
+  color-scheme: dark; }
+
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.55 var(--sans); }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 4px 48px; display: grid; gap: 24px; }
+h1, h2 { font-family: var(--serif); font-weight: 400; margin: 0; text-wrap: balance; }
+h1 { font-size: 32px; line-height: 1.2; } h2 { font-size: 22px; line-height: 1.3; }
+.meta { font-size: 13px; color: var(--text-2); border-bottom: 1px solid var(--line); padding: 12px 0; }
+.meta b { color: var(--text); font-weight: 500; }
+.head { display: grid; gap: 10px; }
+.todo { color: var(--text-2); margin: 0; }
+.todo b { color: var(--text); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 20px; min-width: 0; }
+.num { font-size: 40px; font-weight: 500; line-height: 1; font-variant-numeric: tabular-nums; }
+.lab { font-size: 13px; color: var(--text-2); }
+.pill { display: inline-block; border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 500; white-space: nowrap; }
+.good { color: var(--good); background: var(--good-bg); } .bad { color: var(--bad); background: var(--bad-bg); } .watch { color: var(--watch); background: var(--watch-bg); }
+.clay { color: var(--clay-strong); background: var(--clay-bg); }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.tile { display: grid; gap: 8px; align-content: start; }
+.tile .num.focus { color: var(--clay-strong); }
+.tile .num.badn { color: var(--bad); }
+
+.alert { display: grid; gap: 16px; border-color: var(--bad-bg); }
+.alert-top { display: flex; gap: 12px; align-items: center; }
+.ico { width: 22px; height: 22px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.alert-top .ico { color: var(--bad); }
+.stall-list { display: grid; gap: 12px; }
+.stall { display: grid; grid-template-columns: minmax(150px, 1.2fr) minmax(120px, 2fr) minmax(130px, 1fr); gap: 4px 16px; align-items: center; }
+.stall .who b { font-weight: 600; }
+.stall .who span, .stall .ask { font-size: 13px; color: var(--text-2); }
+.bar { display: flex; align-items: center; gap: 10px; font-size: 13px; font-variant-numeric: tabular-nums; }
+.bar i { display: block; height: 10px; border-radius: 5px; background: var(--bad); }
+.bar .rail { flex: 1; background: var(--track); border-radius: 5px; }
+@media (max-width: 620px) { .stall { grid-template-columns: 1fr; } }
+
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.tabs button { font: 500 16px var(--sans); background: none; border: 0; border-bottom: 2px solid transparent; color: var(--text-2); padding: 10px 14px; cursor: pointer; display: flex; gap: 8px; align-items: center; white-space: nowrap; border-radius: 0; }
+.tabs button .ico { width: 18px; height: 18px; }
+.tabs button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--clay); }
+.tabs button:focus-visible, button:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
+.panel { display: grid; gap: 16px; padding-top: 8px; }
+
+.week { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.day { display: grid; gap: 10px; align-content: start; padding: 16px; }
+.day .d { font-size: 13px; color: var(--text-2); font-weight: 500; }
+.ev { display: grid; gap: 2px; padding: 10px 12px; border-radius: 10px; background: var(--soft); border: 1px solid var(--line); }
+.ev b { font-weight: 600; }
+.ev span { font-size: 13px; color: var(--text-2); }
+.ev.key { background: var(--clay-bg); border-color: transparent; }
+.ev.key b { color: var(--clay-strong); }
+.empty { font-size: 13px; color: var(--text-3); }
+
+.roles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; }
+.role { display: grid; gap: 16px; align-content: start; }
+.role-top { display: flex; justify-content: space-between; gap: 12px; align-items: start; flex-wrap: wrap; }
+.role-top h2 { font-size: 22px; }
+.role-top .lab { margin-top: 2px; }
+.say { margin: 0; }
+.track { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.stage { display: grid; gap: 6px; justify-items: center; text-align: center; }
+.stage .dot { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-weight: 600; background: var(--track); color: var(--text-3); font-variant-numeric: tabular-nums; }
+.stage .dot.on { background: var(--text); color: var(--bg); }
+.stage .dot.offer { background: var(--clay-strong); color: #fff; }
+.stage .lab { font-size: 13px; line-height: 1.25; }
+.rows { display: grid; gap: 0; border-top: 1px solid var(--line); }
+.row { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 13px; align-items: center; }
+.row b { font-size: 16px; font-weight: 500; }
+.row .muted { color: var(--text-2); }
+.row.out b { color: var(--text-3); text-decoration: line-through; }
+
+.chart-wrap { overflow-x: auto; }
+.chart-wrap svg { display: block; width: 100%; min-width: 520px; height: auto; }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--text-2); }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.foot { font-size: 13px; color: var(--text-3); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <div class="head">
+    <div class="meta"><b>Hiring status</b> · Week of Monday, November 2, 2026 · From Alex to hiring managers · Data as of Friday, October 30 · <b>4 candidates need a next step</b></div>
+    <h1>Ana Ruiz gets her designer offer Monday, and 4 candidates have waited 2+ weeks with no next date</h1>
+    <p class="todo"><b>Sam, Ravi and Dana:</b> book a date for the candidates in the red card before Friday.</p>
+  </div>
+
+  <section class="tiles" id="tiles"></section>
+
+  <section class="card alert" aria-labelledby="stallh">
+    <div class="alert-top">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      <h2 id="stallh">4 candidates have no next date and have waited 2 weeks or more</h2>
+    </div>
+    <div class="stall-list" id="stalls"></div>
+  </section>
+
+  <div>
+    <div class="tabs" role="tablist" aria-label="Views">
+      <button role="tab" id="t-week" aria-controls="p-week" aria-selected="true">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>This week</button>
+      <button role="tab" id="t-roles" aria-controls="p-roles" aria-selected="false">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="7" width="17" height="12" rx="2"/><path d="M9 7V5h6v2"/></svg>By role</button>
+      <button role="tab" id="t-all" aria-controls="p-all" aria-selected="false">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="3.2"/><path d="M3.5 19c.8-3 3-4.5 5.5-4.5s4.7 1.5 5.5 4.5"/><circle cx="17" cy="9.5" r="2.5"/><path d="M16 14.6c2.2 0 3.8 1.2 4.5 3.9"/></svg>All candidates</button>
+    </div>
+
+    <section class="panel" id="p-week" role="tabpanel" aria-labelledby="t-week">
+      <h2>7 steps are booked between Monday and Friday</h2>
+      <div class="week" id="week"></div>
+    </section>
+
+    <section class="panel" id="p-roles" role="tabpanel" aria-labelledby="t-roles" hidden>
+      <h2>Designer is closest to a hire, backend engineer is furthest behind</h2>
+      <div class="roles" id="roles"></div>
+    </section>
+
+    <section class="panel" id="p-all" role="tabpanel" aria-labelledby="t-all" hidden>
+      <h2>Days each candidate has spent in their current stage</h2>
+      <div class="legend"><span><i style="background:var(--bad)"></i>2 weeks or more</span><span><i style="background:var(--gray-bar)"></i>Under 2 weeks</span><span><i style="background:var(--clay-strong)"></i>Offer stage</span></div>
+      <div class="card chart-wrap" id="chart"></div>
+    </section>
+  </div>
+
+  <p class="foot">Source: hiring-pipeline.csv, 12 candidates across 4 roles. Updated each Friday for the Monday check.</p>
+</div>
+
+<script>
+const C = [
+  {role:"Designer",cand:"Ana Ruiz",stage:"Offer",owner:"Lea",days:2,next:"Send offer",date:"2026-11-02"},
+  {role:"Designer",cand:"Tom Becker",stage:"Final interview",owner:"Lea",days:5,next:"Decision call",date:"2026-11-03"},
+  {role:"Designer",cand:"Priya Shah",stage:"Rejected",owner:"Lea",days:0,next:"",date:""},
+  {role:"SDR",cand:"Jon Kim",stage:"Final interview",owner:"Sam",days:9,next:"Reference check",date:"2026-11-04"},
+  {role:"SDR",cand:"Maya Cohen",stage:"Final interview",owner:"Sam",days:9,next:"Reference check",date:"2026-11-04"},
+  {role:"SDR",cand:"Leo Martin",stage:"Phone screen",owner:"Sam",days:14,next:"Schedule interview",date:""},
+  {role:"Backend engineer",cand:"Chen Wu",stage:"Technical test",owner:"Ravi",days:12,next:"Review test",date:"2026-11-05"},
+  {role:"Backend engineer",cand:"Sara Lind",stage:"Phone screen",owner:"Ravi",days:3,next:"Technical test",date:"2026-11-06"},
+  {role:"Backend engineer",cand:"Omar Haddad",stage:"Applied",owner:"Ravi",days:21,next:"Screen CV",date:""},
+  {role:"Backend engineer",cand:"Eva Novak",stage:"Applied",owner:"Ravi",days:18,next:"Screen CV",date:""},
+  {role:"Support lead",cand:"Kim Park",stage:"Phone screen",owner:"Dana",days:6,next:"Hiring manager call",date:"2026-11-05"},
+  {role:"Support lead",cand:"Nora Ali",stage:"Applied",owner:"Dana",days:25,next:"Screen CV",date:""}
+];
+const STAGES = ["Applied","Phone screen","Technical test","Final interview","Offer"];
+const ROLES = {
+  "Designer": {status:["good","On track"], say:"<b>Ana Ruiz</b> gets the offer Monday. Tom Becker has his decision call Tuesday."},
+  "SDR": {status:["watch","Watch"], say:"<b>2 finalists</b> have reference checks Wednesday. Leo Martin has waited 14 days for an interview."},
+  "Backend engineer": {status:["bad","Behind"], say:"<b>Nobody is past the technical test.</b> 2 CVs have waited 18 and 21 days to be screened."},
+  "Support lead": {status:["watch","Watch"], say:"<b>Kim Park</b> meets the hiring manager Thursday. Nora Ali's CV has waited 25 days."}
+};
+const LIMIT = 14;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = iso => { const d = new Date(iso + "T12:00:00"); return d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"}); };
+
+const active = C.filter(c => c.stage !== "Rejected");
+const stalled = active.filter(c => !c.date).sort((a,b) => b.days - a.days);
+const week = active.filter(c => c.date >= "2026-11-02" && c.date <= "2026-11-06");
+const offers = active.filter(c => c.stage === "Offer");
+
+document.getElementById("tiles").innerHTML = [
+  {n: active.length, l: "Candidates in the pipeline, across 4 open roles"},
+  {n: offers.length, l: "Offer going out Monday: Ana Ruiz, Designer", cls:"focus"},
+  {n: week.length, l: "Steps booked this week, Monday to Friday"},
+  {n: stalled.length, l: "Candidates with no next date, all waiting 14+ days", cls:"badn"}
+].map(t => `<div class="card tile"><div class="num ${t.cls||""}">${t.n}</div><div class="lab">${t.l}</div></div>`).join("");
+
+const maxDays = 30;
+document.getElementById("stalls").innerHTML = stalled.map(c => `
+  <div class="stall">
+    <div class="who"><b>${esc(c.cand)}</b><br><span>${esc(c.role)} · ${esc(c.stage)}</span></div>
+    <div class="bar"><div class="rail"><i style="width:${c.days/maxDays*100}%"></i></div><span><b>${c.days}</b> days</span></div>
+    <div class="ask"><b style="color:var(--text)">${esc(c.owner)}</b> to ${esc(c.next.toLowerCase())}</div>
+  </div>`).join("");
+
+const days = ["2026-11-02","2026-11-03","2026-11-04","2026-11-05","2026-11-06"];
+document.getElementById("week").innerHTML = days.map(d => {
+  const evs = week.filter(c => c.date === d);
+  return `<div class="card day"><div class="d">${fmt(d)}</div>${
+    evs.length ? evs.map(c => `<div class="ev ${c.stage==="Offer"?"key":""}"><b>${esc(c.cand)}</b><span>${esc(c.next)} · ${esc(c.role)}</span><span>Owner: ${esc(c.owner)}</span></div>`).join("")
+    : `<div class="empty">Nothing booked</div>`}</div>`;
+}).join("");
+
+document.getElementById("roles").innerHTML = Object.keys(ROLES).map(r => {
+  const list = C.filter(c => c.role === r);
+  const owner = list[0].owner;
+  const meta = ROLES[r];
+  const track = STAGES.map(s => {
+    const n = list.filter(c => c.stage === s).length;
+    const cls = n ? (s === "Offer" ? "dot offer" : "dot on") : "dot";
+    return `<div class="stage"><div class="${cls}">${n}</div><div class="lab">${s}</div></div>`;
+  }).join("");
+  const order = s => s === "Rejected" ? -1 : STAGES.indexOf(s);
+  const rows = list.slice().sort((a,b) => order(b.stage) - order(a.stage)).map(c => {
+    if (c.stage === "Rejected") return `<div class="row out"><b>${esc(c.cand)}</b><span class="muted">Rejected</span><span></span></div>`;
+    const when = c.date ? `<span class="pill ${c.stage==="Offer"?"clay":"good"}">${fmt(c.date)}</span>` : `<span class="pill bad">No date, ${c.days} days</span>`;
+    return `<div class="row"><b>${esc(c.cand)}</b><span class="muted">${esc(c.next)}</span>${when}</div>`;
+  }).join("");
+  return `<div class="card role">
+    <div class="role-top"><div><h2>${esc(r)}</h2><div class="lab">Hiring manager: ${esc(owner)}</div></div><span class="pill ${meta.status[0]}">${meta.status[1]}</span></div>
+    <p class="say">${meta.say}</p>
+    <div class="track">${track}</div>
+    <div class="rows">${rows}</div>
+  </div>`;
+}).join("");
+
+(function chart(){
+  const rows = active.slice().sort((a,b) => b.days - a.days);
+  const W = 720, L = 250, R = 50, rowH = 30, top = 10, bottom = 34;
+  const H = top + rows.length*rowH + bottom;
+  const x = d => L + d/maxDays*(W-L-R);
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Days in current stage per candidate">`;
+  [0,7,14,21,28].forEach(t => {
+    s += `<line x1="${x(t)}" x2="${x(t)}" y1="${top}" y2="${H-bottom+4}" stroke="var(--line)" stroke-width="1"${t===LIMIT?' stroke-dasharray="4 4"':''}/>`;
+    s += `<text x="${x(t)}" y="${H-bottom+20}" text-anchor="middle" font-size="13" fill="var(--text-3)">${t===LIMIT?"14 days":t}</text>`;
+  });
+  rows.forEach((c,i) => {
+    const y = top + i*rowH;
+    const col = c.stage === "Offer" ? "var(--clay-strong)" : (c.days >= LIMIT ? "var(--bad)" : "var(--gray-bar)");
+    s += `<text x="0" y="${y+19}" font-size="13" fill="var(--text)" font-weight="600">${esc(c.cand)}</text>`;
+    s += `<text x="${L-12}" y="${y+19}" font-size="13" fill="var(--text-2)" text-anchor="end">${esc(c.stage)}</text>`;
+    s += `<rect x="${x(0)}" y="${y+7}" width="${Math.max(2, x(c.days)-x(0))}" height="16" rx="4" fill="${col}"/>`;
+    s += `<text x="${x(c.days)+8}" y="${y+19}" font-size="13" fill="var(--text-2)">${c.days}</text>`;
+  });
+  s += `<text x="${L}" y="${H-2}" font-size="13" fill="var(--text-3)">Days in current stage</text></svg>`;
+  document.getElementById("chart").innerHTML = s;
+})();
+
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+function show(id){
+  tabs.forEach(t => { const on = t.id === id; t.setAttribute("aria-selected", on); document.getElementById(t.getAttribute("aria-controls")).hidden = !on; });
+  try { localStorage.setItem("hiring-tab", id); } catch(e) {}
+}
+tabs.forEach(t => t.addEventListener("click", () => show(t.id)));
+try { const saved = localStorage.getItem("hiring-tab"); if (saved && document.getElementById(saved)) show(saved); } catch(e) {}
+</script>
+
+</body></html>

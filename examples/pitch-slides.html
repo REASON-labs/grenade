@@ -1,0 +1,293 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Northwind AI at Work</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: persistent header line, one slide card at a time, nav bar under it. Noslop style kit. */
+:root {
+  --bg: #fff; --soft: #f9f9f9; --card: #fff;
+  --text: rgba(0,0,0,.9); --text-2: rgba(0,0,0,.6); --text-3: rgba(0,0,0,.47);
+  --line: rgba(0,0,0,.12); --shadow: 0 4px 20px rgba(0,0,0,.075);
+  --gray-mark: rgba(0,0,0,.16);
+  --clay: #d97757; --clay-strong: #c6613f;
+  --good: #006c10; --good-bg: rgba(16,161,34,.14);
+  --bad: #a42528; --bad-bg: rgba(220,60,61,.12);
+  --watch: #794c02; --watch-bg: rgba(251,179,21,.16);
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #151515; --soft: #0b0b0b; --card: #1f1f1f;
+  --text: rgba(255,255,255,.93); --text-2: rgba(255,255,255,.57); --text-3: rgba(255,255,255,.4);
+  --line: rgba(255,255,255,.12); --shadow: none; --gray-mark: rgba(255,255,255,.2);
+  --good: #53c556; --bad: #f17778; --watch: #e49c06; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #151515; --soft: #0b0b0b; --card: #1f1f1f;
+  --text: rgba(255,255,255,.93); --text-2: rgba(255,255,255,.57); --text-3: rgba(255,255,255,.4);
+  --line: rgba(255,255,255,.12); --shadow: none; --gray-mark: rgba(255,255,255,.2);
+  --good: #53c556; --bad: #f17778; --watch: #e49c06; color-scheme: dark; }
+
+body { margin: 0; background: var(--soft); color: var(--text); font: 16px/1.55 var(--sans); }
+h1, h2 { font-family: var(--serif); font-weight: 400; margin: 0; text-wrap: balance; }
+h1 { font-size: 32px; line-height: 1.2; } h2 { font-size: 32px; line-height: 1.2; }
+.wrap { max-width: 980px; margin: 0 auto; padding-block: 8px 32px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.meta { font-size: 13px; color: var(--text-2); border-bottom: 1px solid var(--line); padding: 12px 0; margin-bottom: 20px; }
+.meta b { color: var(--text); font-weight: 500; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 20px; }
+.num { font-size: 40px; font-weight: 500; line-height: 1; font-variant-numeric: tabular-nums; }
+.label { font-size: 13px; color: var(--text-2); }
+.pill { display: inline-block; border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 500; }
+.good { color: var(--good); background: var(--good-bg); } .watch { color: var(--watch); background: var(--watch-bg); }
+button { font: 500 16px var(--sans); border-radius: 10px; padding: 10px 16px; cursor: pointer; background: var(--card); color: var(--text); border: 1px solid var(--line); }
+button.main { background: var(--clay-strong); color: #fff; border: 0; }
+button:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
+button:disabled { opacity: .4; cursor: default; }
+
+.deck { padding: 32px; min-height: 480px; display: flex; flex-direction: column; gap: 24px; }
+.slide { display: flex; flex-direction: column; gap: 24px; flex: 1; }
+.slide > p.say { margin: 0; color: var(--text-2); max-width: 62ch; }
+.visual { flex: 1; display: flex; align-items: center; }
+.row { display: flex; gap: 16px; flex-wrap: wrap; width: 100%; }
+.row > * { flex: 1 1 200px; min-width: 0; }
+.tile { background: var(--soft); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+.tile.key .num { color: var(--clay-strong); }
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; }
+.dots { display: flex; gap: 6px; }
+.dots button { width: 10px; height: 10px; padding: 0; border-radius: 50%; background: var(--gray-mark); border: 0; }
+.dots button[aria-current="true"] { background: var(--clay); }
+.count { font-size: 13px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+svg text { font-family: var(--sans); }
+.ico { width: 28px; height: 28px; stroke: var(--text-2); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.people { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; max-width: 360px; }
+.people svg { width: 100%; height: auto; stroke: var(--clay); fill: none; stroke-width: 1.6; }
+.eq { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.eq .op { font-size: 22px; color: var(--text-3); }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; font-size: 16px; }
+.chip .ico { width: 20px; height: 20px; }
+.contact { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.contact code { font: 16px var(--sans); user-select: all; }
+.scroll { overflow-x: auto; width: 100%; }
+@media (max-width: 600px) {
+  .deck { padding: 20px; min-height: 0; }
+  h1, h2 { font-size: 22px; }
+  .eq .op { font-size: 16px; }
+}
+@media (prefers-reduced-motion: no-preference) { .slide { animation: in .25s ease-out; } }
+@keyframes in { from { opacity: .6; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+</style>
+
+<div class="wrap">
+  <div class="meta">Proposal · October 30, 2026 · From <b>Sam Rivera</b> to <b>Mr. Alvarez, COO, Northwind Logistics</b> · <b>Your yes by November 20</b> to start January 12</div>
+
+  <main class="card deck" aria-live="polite">
+
+    <!-- 1 -->
+    <section class="slide" id="s1">
+      <h1>40 of your managers can each get 4.5 hours back every week</h1>
+      <p class="say">"AI at work" is a 6-week program where your managers learn to use Claude on their own daily work.</p>
+      <div class="visual">
+        <div class="row">
+          <div class="tile"><span class="num">6 weeks</span><span class="label">From January 12 to February 16</span></div>
+          <div class="tile"><span class="num">40</span><span class="label">Northwind managers</span></div>
+          <div class="tile key"><span class="num">4.5 h</span><span class="label">Saved per manager per week at our last 3 clients</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="slide" id="s2" hidden>
+      <h2>Together, that would be about 180 hours a week across your managers</h2>
+      <div class="visual">
+        <div class="row" style="align-items:center">
+          <div class="people" aria-label="40 managers" id="people"></div>
+          <div class="eq">
+            <div><div class="num">40</div><div class="label">managers</div></div>
+            <span class="op">×</span>
+            <div><div class="num">4.5 h</div><div class="label">saved each week</div></div>
+            <span class="op">=</span>
+            <div><div class="num" style="color:var(--clay-strong)">180 h</div><div class="label">a week, every week</div></div>
+          </div>
+        </div>
+      </div>
+      <p class="say">This is an estimate if Northwind matches the average of our last 3 clients.</p>
+    </section>
+
+    <!-- 3 -->
+    <section class="slide" id="s3" hidden>
+      <h2>At our last 3 clients, the habit stuck after the program ended</h2>
+      <div class="visual">
+        <div class="row">
+          <div class="tile">
+            <svg viewBox="0 0 320 150" role="img" aria-label="Hours saved per week: 0 in week 1, 4.5 in week 6">
+              <line x1="20" y1="120" x2="300" y2="120" stroke="var(--line)"/>
+              <rect x="60" y="116" width="70" height="4" fill="var(--gray-mark)"/>
+              <rect x="190" y="30" width="70" height="90" rx="4" fill="var(--clay)"/>
+              <text x="95" y="106" text-anchor="middle" font-size="13" fill="var(--text-2)">baseline</text>
+              <text x="225" y="22" text-anchor="middle" font-size="16" font-weight="500" fill="var(--text)">4.5 h saved</text>
+              <text x="95" y="140" text-anchor="middle" font-size="13" fill="var(--text-2)">Week 1</text>
+              <text x="225" y="140" text-anchor="middle" font-size="13" fill="var(--text-2)">Week 6</text>
+            </svg>
+            <span class="label"><b>4.5 hours a week saved</b> on average, measured in week 1 and again in week 6</span>
+          </div>
+          <div class="tile">
+            <svg viewBox="0 0 320 150" role="img" aria-label="87 percent still use Claude daily">
+              <circle cx="160" cy="70" r="55" fill="none" stroke="var(--gray-mark)" stroke-width="14"/>
+              <circle cx="160" cy="70" r="55" fill="none" stroke="var(--clay)" stroke-width="14"
+                stroke-dasharray="300.6 345.6" transform="rotate(-90 160 70)" stroke-linecap="round"/>
+              <text x="160" y="80" text-anchor="middle" font-size="30" font-weight="500" fill="var(--text)">87%</text>
+            </svg>
+            <span class="label"><b>87% still use Claude daily</b> 3 months after the program</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="slide" id="s4" hidden>
+      <h2>Each manager spends 9.5 hours in sessions over 6 weeks</h2>
+      <div class="visual">
+        <div class="scroll">
+          <svg viewBox="0 0 640 210" style="min-width:520px;width:100%" role="img" aria-label="Session length per week">
+            <line x1="20" y1="150" x2="620" y2="150" stroke="var(--line)"/>
+            <g id="bars"></g>
+          </svg>
+        </div>
+      </div>
+      <div class="chips" aria-label="Topics">
+        <span class="label" style="align-self:center">Every session uses their own work:</span>
+        <span class="chip"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Emails</span>
+        <span class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7"/></svg>Reports</span>
+        <span class="chip"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Planning</span>
+        <span class="chip"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M10 4v16"/></svg>Spreadsheets</span>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="slide" id="s5" hidden>
+      <h2>Your team leaves with 120 workflows they keep using</h2>
+      <div class="visual">
+        <div class="eq">
+          <div><div class="num">40</div><div class="label">managers</div></div>
+          <span class="op">×</span>
+          <div><div class="num">3</div><div class="label">workflows each, built during the program</div></div>
+          <span class="op">=</span>
+          <div><div class="num" style="color:var(--clay-strong)">120</div><div class="label">workflows built on Northwind's real work</div></div>
+        </div>
+      </div>
+      <p class="say">Managers build them in the sessions, so they are <b>ready to use on day one</b> after the program.</p>
+    </section>
+
+    <!-- 6 -->
+    <section class="slide" id="s6" hidden>
+      <h2>The program costs $24,000 for all 40 managers</h2>
+      <div class="visual">
+        <div class="row">
+          <div class="tile key"><span class="num">$24,000</span><span class="label">Total price</span></div>
+          <div class="tile"><span class="num">$600</span><span class="label">Per manager</span></div>
+          <div class="tile"><span class="num">9.5 h</span><span class="label">Of live sessions per manager</span></div>
+        </div>
+      </div>
+      <div><span class="pill watch">Claude licenses are not included in this price</span></div>
+    </section>
+
+    <!-- 7 -->
+    <section class="slide" id="s7" hidden>
+      <h2>Sign by November 20 and your managers start on January 12</h2>
+      <div class="visual">
+        <div class="scroll">
+          <svg viewBox="0 0 640 130" style="min-width:520px;width:100%" role="img" aria-label="Timeline">
+            <line x1="40" y1="50" x2="600" y2="50" stroke="var(--gray-mark)" stroke-width="2"/>
+            <circle cx="40" cy="50" r="7" fill="var(--gray-mark)"/>
+            <circle cx="227" cy="50" r="10" fill="var(--clay)"/>
+            <circle cx="413" cy="50" r="7" fill="var(--gray-mark)"/>
+            <circle cx="600" cy="50" r="7" fill="var(--gray-mark)"/>
+            <text x="40" y="88" text-anchor="middle" font-size="16" fill="var(--text)">Oct 30</text>
+            <text x="40" y="108" text-anchor="middle" font-size="13" fill="var(--text-2)">Proposal sent</text>
+            <text x="227" y="88" text-anchor="middle" font-size="16" font-weight="500" fill="var(--text)">Nov 20</text>
+            <text x="227" y="108" text-anchor="middle" font-size="13" fill="var(--text-2)">Your decision</text>
+            <text x="413" y="88" text-anchor="middle" font-size="16" fill="var(--text)">Jan 12</text>
+            <text x="413" y="108" text-anchor="middle" font-size="13" fill="var(--text-2)">Live kickoff</text>
+            <text x="600" y="88" text-anchor="middle" font-size="16" fill="var(--text)">Feb 16</text>
+            <text x="600" y="108" text-anchor="middle" font-size="13" fill="var(--text-2)">Last session</text>
+          </svg>
+        </div>
+      </div>
+      <div class="contact">
+        <button class="main" id="copy" type="button">Copy Sam's email</button>
+        <span>Reply to <b>Sam Rivera</b> at <code id="email">sam@brightpath.example</code></span>
+        <span class="label" id="copied" role="status"></span>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="nav" aria-label="Slides">
+    <button id="prev" type="button">Back</button>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="dots" id="dots"></div>
+      <span class="count" id="count"></span>
+    </div>
+    <button id="next" type="button" class="main">Next</button>
+  </nav>
+</div>
+
+<script>
+(function () {
+  // 40 people
+  var p = document.getElementById('people'), html = '';
+  for (var i = 0; i < 40; i++) html += '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
+  p.innerHTML = html;
+
+  // session bars: week 1 = 2h, weeks 2-6 = 1.5h
+  var weeks = [['Week 1','Jan 12',2,'Kickoff'],['Week 2','Jan 19',1.5,''],['Week 3','Jan 26',1.5,''],['Week 4','Feb 2',1.5,''],['Week 5','Feb 9',1.5,''],['Week 6','Feb 16',1.5,'']];
+  var g = document.getElementById('bars'), s = '', scale = 55;
+  weeks.forEach(function (w, i) {
+    var x = 40 + i * 98, h = w[2] * scale, y = 150 - h, cx = x + 34;
+    var col = i === 0 ? 'var(--clay)' : 'var(--gray-mark)';
+    s += '<rect x="' + x + '" y="' + y + '" width="68" height="' + h + '" rx="4" fill="' + col + '"/>';
+    s += '<text x="' + cx + '" y="' + (y - 8) + '" text-anchor="middle" font-size="13" fill="var(--text)">' + (w[2] === 2 ? '2 h' : '90 min') + '</text>';
+    s += '<text x="' + cx + '" y="172" text-anchor="middle" font-size="13" fill="var(--text)">' + w[0] + '</text>';
+    s += '<text x="' + cx + '" y="192" text-anchor="middle" font-size="13" fill="var(--text-2)">' + (w[3] ? w[3] + ' · ' : '') + w[1] + '</text>';
+  });
+  g.innerHTML = s;
+
+  // deck
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var dots = document.getElementById('dots'), cur = 0;
+  slides.forEach(function (_, i) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.setAttribute('aria-label', 'Slide ' + (i + 1));
+    b.addEventListener('click', function () { go(i); });
+    dots.appendChild(b);
+  });
+  function go(i) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function (sl, j) { sl.hidden = j !== cur; });
+    Array.prototype.forEach.call(dots.children, function (d, j) { d.setAttribute('aria-current', j === cur ? 'true' : 'false'); });
+    document.getElementById('count').textContent = (cur + 1) + ' of ' + slides.length;
+    document.getElementById('prev').disabled = cur === 0;
+    var n = document.getElementById('next');
+    n.disabled = cur === slides.length - 1;
+    n.className = cur === slides.length - 1 ? '' : 'main';
+  }
+  document.getElementById('prev').addEventListener('click', function () { go(cur - 1); });
+  document.getElementById('next').addEventListener('click', function () { go(cur + 1); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') go(cur + 1);
+    if (e.key === 'ArrowLeft') go(cur - 1);
+  });
+  go(0);
+
+  // copy
+  document.getElementById('copy').addEventListener('click', function () {
+    var t = document.getElementById('email').textContent, out = document.getElementById('copied');
+    function sel() { var r = document.createRange(); r.selectNodeContents(document.getElementById('email')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); out.textContent = 'Selected. Press Ctrl+C or Cmd+C.'; }
+    try {
+      navigator.clipboard.writeText(t).then(function () { out.textContent = 'Copied'; }, sel);
+    } catch (e) { sel(); }
+  });
+})();
+</script>
+
+</body></html>

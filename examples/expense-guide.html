@@ -1,0 +1,367 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Ramp Expense Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: header line, title, deadline alert, step path, one step per screen with Back/Next, help footer */
+:root {
+  --bg: #fff; --soft: #f9f9f9; --card: #fff;
+  --text: rgba(0,0,0,.9); --text-2: rgba(0,0,0,.6); --text-3: rgba(0,0,0,.47);
+  --line: rgba(0,0,0,.12); --shadow: 0 4px 20px rgba(0,0,0,.075);
+  --clay: #d97757; --clay-strong: #c6613f; --clay-bg: rgba(217,119,87,.12);
+  --good: #006c10; --good-bg: rgba(16,161,34,.14);
+  --bad: #a42528; --bad-bg: rgba(220,60,61,.12);
+  --watch: #794c02; --watch-bg: rgba(251,179,21,.16);
+  --on-clay: #fff;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #151515; --soft: #0b0b0b; --card: #1f1f1f;
+  --text: rgba(255,255,255,.93); --text-2: rgba(255,255,255,.57); --text-3: rgba(255,255,255,.4);
+  --line: rgba(255,255,255,.12); --shadow: none; --clay-bg: rgba(217,119,87,.18);
+  --good: #53c556; --bad: #f17778; --watch: #e49c06; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #151515; --soft: #0b0b0b; --card: #1f1f1f;
+  --text: rgba(255,255,255,.93); --text-2: rgba(255,255,255,.57); --text-3: rgba(255,255,255,.4);
+  --line: rgba(255,255,255,.12); --shadow: none; --clay-bg: rgba(217,119,87,.18);
+  --good: #53c556; --bad: #f17778; --watch: #e49c06; color-scheme: dark; }
+
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.55 var(--sans); }
+h1, h2 { font-family: var(--serif); font-weight: 400; margin: 0; text-wrap: balance; }
+h1 { font-size: 32px; line-height: 1.2; } h2 { font-size: 22px; line-height: 1.3; }
+p { margin: 0; }
+b { font-weight: 600; }
+.wrap { max-width: 920px; margin: 0 auto; padding-block: 8px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 20px; }
+.meta { font-size: 13px; color: var(--text-2); border-bottom: 1px solid var(--line); padding: 12px 0; }
+.meta b { color: var(--text); }
+.lede { color: var(--text-2); margin-top: 8px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 20px; }
+.num { font-size: 40px; font-weight: 500; line-height: 1; font-variant-numeric: tabular-nums; }
+.label { font-size: 13px; color: var(--text-2); }
+.pill { display: inline-block; border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 500; }
+.good { color: var(--good); background: var(--good-bg); } .bad { color: var(--bad); background: var(--bad-bg); } .watch { color: var(--watch); background: var(--watch-bg); }
+button { font: 500 16px var(--sans); border-radius: 10px; padding: 10px 16px; cursor: pointer; background: var(--card); color: var(--text); border: 1px solid var(--line); }
+button.main { background: var(--clay-strong); color: #fff; border: 0; }
+button:disabled { opacity: .4; cursor: default; }
+button:focus-visible, .chip:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
+svg.i { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+/* deadline alert */
+.alert { display: flex; gap: 14px; align-items: center; background: var(--watch-bg); color: var(--text); border-radius: 14px; padding: 14px 18px; }
+.alert .i { color: var(--watch); width: 26px; height: 26px; }
+.alert .when { color: var(--watch); font-weight: 600; white-space: nowrap; }
+
+/* path */
+.path-scroll { overflow-x: auto; margin: 0 -4px; padding: 4px; }
+.path { display: grid; grid-template-columns: repeat(6, minmax(120px, 1fr)); gap: 8px; min-width: 760px; list-style: none; margin: 0; padding: 0; }
+.chip { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; text-align: left; width: 100%; height: 100%;
+  font: 400 13px/1.35 var(--sans); padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--text-2); }
+.chip .top { display: flex; align-items: center; gap: 8px; color: var(--text-3); font-weight: 500; }
+.chip[aria-current="step"] { border-color: var(--clay); background: var(--clay-bg); color: var(--text); }
+.chip[aria-current="step"] .top { color: var(--clay-strong); }
+.chip.done .top { color: var(--good); }
+
+/* step */
+.step { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.step .visual { background: var(--soft); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.step .words { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.step .eyebrow { font-size: 13px; color: var(--clay-strong); font-weight: 500; }
+.rules { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.rules li { display: flex; gap: 10px; align-items: flex-start; }
+.rules li .i { color: var(--text-3); width: 20px; height: 20px; margin-top: 2px; }
+.rules li.warn { color: var(--bad); }
+.rules li.warn .i { color: var(--bad); }
+.nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+.nav .count { font-size: 13px; color: var(--text-3); }
+@media (max-width: 680px) { .step { grid-template-columns: 1fr; } }
+
+/* mockups */
+.mock { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 13px; }
+.mock-bar { display: flex; gap: 6px; padding: 8px 12px; border-bottom: 1px solid var(--line); color: var(--text-3); align-items: center; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.mail-row { display: grid; grid-template-columns: 70px minmax(0,1fr) auto; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--line); color: var(--text-3); }
+.mail-row:last-child { border-bottom: 0; }
+.mail-row.hit { background: var(--clay-bg); color: var(--text); font-weight: 600; }
+.folders { display: flex; gap: 6px; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+.folders span { padding: 2px 8px; border-radius: 999px; color: var(--text-3); }
+.folders .on { background: var(--watch-bg); color: var(--watch); font-weight: 500; }
+
+.vcard { background: var(--clay-strong); color: var(--on-clay); border-radius: 14px; padding: 18px; aspect-ratio: 1.6; max-width: 100%; display: flex; flex-direction: column; justify-content: space-between; max-height: 190px; }
+.vcard .row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.vcard .digits { font-size: 16px; letter-spacing: .12em; font-variant-numeric: tabular-nums; }
+.limit-track { height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.limit-fill { height: 100%; width: 100%; background: var(--clay); }
+.limit-legend { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.uses { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; }
+.use { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; font-size: 13px; }
+.use .i { color: var(--clay); }
+
+.field { padding: 10px 12px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; }
+.field:last-child { border-bottom: 0; }
+.field .k { font-size: 13px; color: var(--text-3); display: flex; justify-content: space-between; }
+.field .v { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; color: var(--text); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.receipt { display: flex; gap: 10px; align-items: center; }
+.receipt .thumb { width: 44px; height: 56px; border: 1px solid var(--line); border-radius: 6px; background: repeating-linear-gradient(var(--card) 0 7px, var(--line) 7px 8px); }
+.tag-req { color: var(--clay-strong); font-weight: 500; }
+
+.timeline { display: flex; flex-direction: column; gap: 0; }
+.tl { display: grid; grid-template-columns: 34px minmax(0,1fr); gap: 12px; }
+.tl .rail { display: flex; flex-direction: column; align-items: center; }
+.tl .node { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); display: grid; place-items: center; color: var(--text-2); }
+.tl .node.clay { background: var(--clay-strong); border-color: var(--clay-strong); color: #fff; }
+.tl .stem { flex: 1; width: 2px; background: var(--line); min-height: 18px; }
+.tl .txt { padding: 5px 0 16px; font-size: 13px; color: var(--text-2); }
+.tl .txt b { display: block; font-size: 16px; color: var(--text); font-weight: 500; }
+.example { font-size: 13px; color: var(--text-2); border-top: 1px dashed var(--line); padding-top: 10px; }
+
+.ladder { display: flex; flex-direction: column; gap: 8px; }
+.rung { display: grid; grid-template-columns: 110px minmax(0,1fr); gap: 12px; align-items: center; }
+.rung .amt { font-weight: 600; font-variant-numeric: tabular-nums; }
+.rung .bar { border-radius: 10px; padding: 10px 12px; font-size: 13px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; border: 1px solid var(--line); background: var(--card); }
+.who { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 999px; background: var(--clay-bg); color: var(--text); font-weight: 500; }
+.who .i { width: 16px; height: 16px; color: var(--clay-strong); }
+.plus { color: var(--text-3); }
+
+.nos { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.no { display: flex; gap: 12px; align-items: center; background: var(--bad-bg); border-radius: 12px; padding: 12px 14px; }
+.no .i { color: var(--bad); }
+.no b { color: var(--text); }
+
+.help { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.help .i { color: var(--clay); width: 26px; height: 26px; }
+.help .slack { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--soft); border: 1px solid var(--line); border-radius: 8px; padding: 2px 8px; }
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; }
+.fact { display: flex; flex-direction: column; gap: 6px; }
+@media (max-width: 680px) { .facts { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (prefers-reduced-motion: no-preference) { section[data-step] { animation: in .18s ease-out; } @keyframes in { from { opacity: .4; transform: translateY(4px); } to { opacity: 1; transform: none; } } }
+</style>
+
+<div class="wrap">
+  <div class="meta"><b>Expense process</b> · Starts November 1, 2026 · From Alex to the whole company · <b>File old expenses by October 31</b></div>
+
+  <header>
+    <h1>Starting November 1, every expense goes through Ramp</h1>
+    <p class="lede">Go through the 6 steps below before your first expense.</p>
+  </header>
+
+  <div class="alert" role="note">
+    <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    <p><span class="when">Saturday, October 31:</span> the old shared expense spreadsheet closes. <b>Add anything you paid before November</b> to it by then.</p>
+  </div>
+
+  <div class="facts">
+    <div class="card fact"><span class="num">$500</span><span class="label">Your Ramp card limit per month</span></div>
+    <div class="card fact"><span class="num">30</span><span class="label">Days to upload a receipt</span></div>
+    <div class="card fact"><span class="num">$200</span><span class="label">Above this, your manager approves</span></div>
+    <div class="card fact"><span class="num">$2,000</span><span class="label">Above this, Dana in finance approves too</span></div>
+  </div>
+
+  <nav class="path-scroll" aria-label="Steps">
+    <ol class="path" id="path"></ol>
+  </nav>
+
+  <div class="card">
+    <!-- STEP 1 -->
+    <section data-step="1" data-short="Accept your Ramp invite" class="step">
+      <div class="visual">
+        <div class="mock" aria-hidden="true">
+          <div class="mock-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span style="margin-left:6px">Your work email</span></div>
+          <div class="folders"><span>Inbox</span><span class="on">Spam</span><span>Promotions</span></div>
+          <div class="mail-row"><span>Newsletter</span><span>Weekly digest</span><span>Oct 29</span></div>
+          <div class="mail-row hit"><span>Ramp</span><span>Your invite to join Ramp</span><span>Oct 28</span></div>
+          <div class="mail-row"><span>Calendar</span><span>Reminder: team sync</span><span>Oct 27</span></div>
+        </div>
+        <p class="label">Look for an email from Ramp dated October 28.</p>
+      </div>
+      <div class="words">
+        <span class="eyebrow">Step 1 of 6</span>
+        <h2>Accept the Ramp invite in your email</h2>
+        <ul class="rules">
+          <li><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><p>Everyone got an <b>invite email on October 28</b>.</p></li>
+          <li><svg class="i" viewBox="0 0 24 24"><path d="M10.3 3.9 2.6 17a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><p>Can't find it? <b>Check your spam folder</b>.</p></li>
+          <li><svg class="i" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg><p>Ramp is where you'll do <b>everything</b>: your card, receipts and reimbursements.</p></li>
+          <li><svg class="i" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12z"/></svg><p>Still missing? Ask in <b>#finance</b> on Slack.</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- STEP 2 -->
+    <section data-step="2" data-short="Pay with your Ramp card" class="step" hidden>
+      <div class="visual">
+        <div class="vcard" aria-hidden="true">
+          <div class="row"><span>Ramp</span><span>Virtual card</span></div>
+          <div class="digits">•••• •••• •••• 0000</div>
+          <div class="row"><span>Your name</span><span>$500 / month</span></div>
+        </div>
+        <div class="limit-track" aria-hidden="true"><div class="limit-fill"></div></div>
+        <div class="limit-legend"><span>$0</span><span>$500 each month, unless your manager raises it</span></div>
+        <div class="uses">
+          <div class="use"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>Software</div>
+          <div class="use"><svg class="i" viewBox="0 0 24 24"><path d="M2 16l20-6-3-3-7 2-5-4-2 1 3 5-4 1-2-2-1 1z"/><path d="M3 20h18"/></svg>Travel</div>
+          <div class="use"><svg class="i" viewBox="0 0 24 24"><path d="M7 3v8a2 2 0 0 0 4 0V3M9 11v10M17 3c-2 0-3 3-3 6s1 4 3 4v8"/></svg>Client meals</div>
+        </div>
+      </div>
+      <div class="words">
+        <span class="eyebrow">Step 2 of 6</span>
+        <h2>Pay for work costs with your Ramp card</h2>
+        <ul class="rules">
+          <li><svg class="i" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><p>Everyone gets a <b>virtual card</b> inside the Ramp app.</p></li>
+          <li><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p>Use it for <b>software, travel and client meals</b>.</p></li>
+          <li><svg class="i" viewBox="0 0 24 24"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><p>Your limit is <b>$500 per month</b>. Need more? Ask your manager to raise it.</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- STEP 3 -->
+    <section data-step="3" data-short="Add receipt, category, reason" class="step" hidden>
+      <div class="visual">
+        <div class="mock" aria-hidden="true">
+          <div class="mock-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span style="margin-left:6px">Ramp · New expense (example)</span></div>
+          <div class="field"><span class="k">Receipt photo <span class="tag-req">Required</span></span>
+            <div class="receipt"><div class="thumb"></div><span>receipt.jpg</span></div></div>
+          <div class="field"><span class="k">Category <span class="tag-req">Required</span></span>
+            <div class="v"><span>Client meals</span><svg class="i" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="m6 9 6 6 6-6"/></svg></div></div>
+          <div class="field"><span class="k">Why (one line) <span class="tag-req">Required</span></span>
+            <div class="v"><span>Lunch with a client to plan the Q1 campaign</span></div></div>
+        </div>
+      </div>
+      <div class="words">
+        <span class="eyebrow">Step 3 of 6</span>
+        <h2>Every expense needs a receipt, a category and a reason</h2>
+        <ul class="rules">
+          <li><svg class="i" viewBox="0 0 24 24"><path d="M3 7h3l2-3h8l2 3h3v13H3z"/><circle cx="12" cy="13" r="4"/></svg><p><b>Photo of the receipt</b>, taken with your phone in Ramp.</p></li>
+          <li><svg class="i" viewBox="0 0 24 24"><path d="M3 12V3h9l9 9-9 9z"/><circle cx="8" cy="8" r="1.5"/></svg><p><b>Category</b>, picked from the list.</p></li>
+          <li><svg class="i" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg><p><b>One line</b> on why you spent it.</p></li>
+          <li class="warn"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg><p>Without a receipt, <b>you won't be reimbursed</b>.</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- STEP 4 -->
+    <section data-step="4" data-short="Paid yourself? Get paid back" class="step" hidden>
+      <div class="visual">
+        <div class="timeline">
+          <div class="tl"><div class="rail"><div class="node"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg></div><div class="stem"></div></div>
+            <div class="txt"><b>You pay with your own money</b>Day 0</div></div>
+          <div class="tl"><div class="rail"><div class="node clay"><svg class="i" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg></div><div class="stem"></div></div>
+            <div class="txt"><b>Upload the receipt, choose "Reimbursement"</b>Within 30 days</div></div>
+          <div class="tl"><div class="rail"><div class="node"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></div></div>
+            <div class="txt"><b>Money arrives with the next payroll</b>The 15th or the last day of the month</div></div>
+        </div>
+        <p class="example">Example: you pay on November 3 and upload on November 5. You get it back on the <b>November 15</b> payroll.</p>
+      </div>
+      <div class="words">
+        <span class="eyebrow">Step 4 of 6</span>
+        <h2>If you paid with your own money, upload it in Ramp to get it back</h2>
+        <ul class="rules">
+          <li><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><p>Upload within <b>30 days</b> of paying.</p></li>
+          <li><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p>Choose <b>"Reimbursement"</b> as the type.</p></li>
+          <li><svg class="i" viewBox="0 0 24 24"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><p>You get paid in the <b>next payroll</b>: the 15th or the last day of the month.</p></li>
+          <li class="warn"><svg class="i" viewBox="0 0 24 24"><path d="M10.3 3.9 2.6 17a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><p>The step 3 rules apply here too: <b>receipt, category, reason</b>.</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- STEP 5 -->
+    <section data-step="5" data-short="Big expenses need approval" class="step" hidden>
+      <div class="visual">
+        <div class="ladder">
+          <div class="rung"><span class="amt">Up to $200</span><div class="bar"><span class="pill good">Just file it</span></div></div>
+          <div class="rung"><span class="amt">Over $200</span><div class="bar"><span class="who"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Your manager</span></div></div>
+          <div class="rung"><span class="amt">Over $2,000</span><div class="bar"><span class="who"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Your manager</span><span class="plus">+</span><span class="who"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Dana, finance</span></div></div>
+        </div>
+        <p class="label">Approvals happen inside Ramp. You don't need to email anyone.</p>
+      </div>
+      <div class="words">
+        <span class="eyebrow">Step 5 of 6</span>
+        <h2>Expenses over $200 need approval in Ramp</h2>
+        <ul class="rules">
+          <li><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>Up to $200</b>: file it, nobody needs to approve.</p></li>
+          <li><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><p><b>Over $200</b>: your manager approves in Ramp.</p></li>
+          <li><svg class="i" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21a7 7 0 0 1 14 0M15 21a5 5 0 0 1 7-4.6"/></svg><p><b>Over $2,000</b>: your manager, then <b>Dana in finance</b>.</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- STEP 6 -->
+    <section data-step="6" data-short="What we don't pay for" class="step" hidden>
+      <div class="visual">
+        <div class="nos">
+          <div class="no"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.6 5.6 12.8 12.8"/></svg><p><b>Alcohol</b> without a client present</p></div>
+          <div class="no"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.6 5.6 12.8 12.8"/></svg><p><b>Personal travel upgrades</b></p></div>
+          <div class="no"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.6 5.6 12.8 12.8"/></svg><p><b>Gifts over $50</b></p></div>
+        </div>
+      </div>
+      <div class="words">
+        <span class="eyebrow">Step 6 of 6</span>
+        <h2>The company won't pay for these 3 things</h2>
+        <ul class="rules">
+          <li class="warn"><svg class="i" viewBox="0 0 24 24"><path d="M10.3 3.9 2.6 17a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><p>Don't put them on your Ramp card or file them for reimbursement.</p></li>
+          <li><svg class="i" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12z"/></svg><p>Not sure if something counts? <b>Ask in #finance before you pay</b>.</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="nav">
+      <button id="back" type="button">Back</button>
+      <span class="count" id="count"></span>
+      <button id="next" type="button" class="main">Next</button>
+    </div>
+  </div>
+
+  <div class="card help">
+    <svg class="i" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12z"/></svg>
+    <p>Questions about expenses? Ask in <span class="slack">#finance</span> on Slack. Large expense approvals: <b>Dana, finance</b>.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  const steps = Array.from(document.querySelectorAll('section[data-step]'));
+  const path = document.getElementById('path');
+  const back = document.getElementById('back');
+  const next = document.getElementById('next');
+  const count = document.getElementById('count');
+  let cur = 1;
+
+  steps.forEach(s => {
+    const n = +s.dataset.step;
+    const li = document.createElement('li');
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip'; b.id = 'chip-' + n;
+    b.innerHTML = '<span class="top">Step ' + n + '</span><span>' + s.dataset.short + '</span>';
+    b.addEventListener('click', () => go(n));
+    li.appendChild(b); path.appendChild(li);
+  });
+
+  function go(n, fromHash) {
+    cur = Math.min(Math.max(n, 1), steps.length);
+    steps.forEach(s => { s.hidden = +s.dataset.step !== cur; });
+    steps.forEach(s => {
+      const c = document.getElementById('chip-' + s.dataset.step);
+      const k = +s.dataset.step;
+      if (k === cur) c.setAttribute('aria-current', 'step'); else c.removeAttribute('aria-current');
+      c.classList.toggle('done', k < cur);
+    });
+    back.disabled = cur === 1;
+    next.textContent = cur === steps.length ? 'Back to step 1' : 'Next';
+    count.textContent = 'Step ' + cur + ' of ' + steps.length;
+    if (!fromHash && location.hash !== '#step-' + cur) history.replaceState(null, '', '#step-' + cur);
+  }
+
+  back.addEventListener('click', () => go(cur - 1));
+  next.addEventListener('click', () => go(cur === steps.length ? 1 : cur + 1));
+  document.addEventListener('keydown', e => {
+    if (e.target.closest('input, textarea, select')) return;
+    if (e.key === 'ArrowRight') go(cur + 1);
+    if (e.key === 'ArrowLeft') go(cur - 1);
+  });
+  function fromHash() { const m = location.hash.match(/^#step-(\d)$/); go(m ? +m[1] : 1, true); }
+  window.addEventListener('hashchange', fromHash);
+  fromHash();
+})();
+</script>
+
+</body></html>
