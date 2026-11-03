@@ -1,0 +1,10 @@
+{
+  "name": "reason-noslop",
+  "version": "0.1.0",
+  "description": "No slop, REASON edition: grenade's rules in the jaybb.com look and Jay's voice.",
+  "author": { "name": "Jay (REASON Labs)" },
+  "homepage": "https://github.com/REASON-labs/grenade",
+  "repository": "https://github.com/REASON-labs/grenade",
+  "license": "MIT",
+  "keywords": ["artifacts", "design", "writing", "slop", "reason"]
+}

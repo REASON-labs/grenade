@@ -18,6 +18,18 @@
       "license": "MIT",
       "category": "productivity",
       "keywords": ["artifacts", "design", "writing", "slop"]
+    },
+    {
+      "name": "reason-noslop",
+      "source": "./plugins/reason-noslop",
+      "description": "No slop, REASON edition: grenade's rules in the jaybb.com look and Jay's voice.",
+      "version": "0.1.0",
+      "author": { "name": "Jay (REASON Labs)" },
+      "homepage": "https://github.com/REASON-labs/grenade",
+      "repository": "https://github.com/REASON-labs/grenade",
+      "license": "MIT",
+      "category": "productivity",
+      "keywords": ["artifacts", "design", "writing", "slop", "reason"]
     }
   ]
 }
