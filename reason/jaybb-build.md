@@ -38,9 +38,10 @@ A new page picks its form from this table first. If nothing fits, use the form t
 3. **One main button per page.** It's the green bordered one. On home it's IT help. On a course it's Buy. On About it's contact. Everything else is a plain link.
 4. **Say each link once per screen.** Nav, globe, button row and terminal must not all point at the same pages. Pick one main way per screen. The terminal and globe are for fun, so every place they go has to also be reachable from the nav.
 5. **No empty rooms.** A page with nothing on it (`0 entries`) stays out of the nav, the terminal's `help` and the sitemap until it has something.
-6. **Every claim is checkable.** Prices match Stripe. Project status matches reality. Years of experience match the LearnIT credential line. If you're not sure, ask Jay instead of guessing.
-7. **Hard limits:** at most 4 sections under the first screen, 5 items per card or list, 1 table, 1 main button. The first screen has 50 to 120 words, and most of them are content, not frame.
-8. **Accessibility is not optional.** WCAG 2.2 AA, checked with axe-core: 0 violations. Skip link, one h1, focus ring, pause buttons on anything that moves for more than 5 seconds, reduced motion respected, 4.5:1 contrast for text, 24px tap targets, `(opens in new tab)` for new tabs. The globe isn't keyboard friendly, so everything it links to exists somewhere else.
+6. **Never name Jay's employers.** Not the current one, and not any homebuilder or construction company he's worked with. Say "a homebuilder" or "construction companies". This applies to every public page, share image, description and post.
+7. **Every claim is checkable.** Prices match Stripe. Project status matches reality. Years of experience match the LearnIT credential line. If you're not sure, ask Jay instead of guessing.
+8. **Hard limits:** at most 4 sections under the first screen, 5 items per card or list, 1 table, 1 main button. The first screen has 50 to 120 words, and most of them are content, not frame.
+9. **Accessibility is not optional.** WCAG 2.2 AA, checked with axe-core: 0 violations. Skip link, one h1, focus ring, pause buttons on anything that moves for more than 5 seconds, reduced motion respected, 4.5:1 contrast for text, 24px tap targets, `(opens in new tab)` for new tabs. The globe isn't keyboard friendly, so everything it links to exists somewhere else.
 
 ## 4. Voice
 
