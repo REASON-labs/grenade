@@ -31,7 +31,7 @@ LearnIT is the best page on the site: price, length, who teaches it, and a buy b
 | 3 | **One main button, in plain words** | 4 equal buttons, all written as commands, and none of them is "get IT help" | Small |
 | 4 | **Give the About terminal real facts** | 11 lines that say nothing you can act on ("hopefully changing. moving forward.") | Small |
 | 5 | **Fill out Projects** | 2 one-line cards, while you have more live work than that | Medium |
-| 6 | **Hide Thoughts until there's a post** | An empty page ("0 entries") sits in the main nav | Tiny |
+| 6 | **Turn Thoughts into writing about you and your projects** | An empty page ("0 entries") sits in the main nav, and you've decided personal posts don't belong there | Small |
 | 7 | **Shrink the globe or make it carry data** | Biggest thing on the first screen, carries no information, repeats the nav | Medium |
 | 8 | **Make the nav wrap on phones** | 7 links in a row with no wrap, likely runs off a 400px screen | Tiny |
 | 9 | **Cut to 5 text sizes, 13px minimum** | About 25 sizes in the CSS, most body text at 12 to 13.6px in mono | Medium |
@@ -55,7 +55,7 @@ That gives the first screen about 30 words that mean something, without losing t
 
 **5. Projects.** Each card gets a status pill (`[live]`, `[building]`), one plain line on what it does, and a link. Candidates I know of: The Feed, Echo Journal, the IT helper, LearnIT, REASON Labs. You pick which are public. Today's subtitle "running log / things i'm building" is close, just make "things I'm building right now" the heading.
 
-**6. Thoughts.** Take it out of `components/Nav.tsx`, the terminal's `help`, and the sitemap until the first post exists. The code to bring it back is already there.
+**6. Thoughts.** You decided (Nov 3) this becomes a section for writing about you and your projects, under a new name (you're picking one). Personal posts stay off the main nav: either a hidden section that isn't linked anywhere and is set to `noindex`, or Instagram. Rename the route, the nav link, the terminal command and the page heading together, and keep `/thoughts` redirecting to the new route. Keep it out of the nav until the first post exists.
 
 **7. Globe.** Two options. Make it smaller and put the intro line beside it on desktop. Or make the nodes carry something real, like each live project with its status, and drop the nav duplicates. Right now the nav, the globe, the button row and the terminal all go to the same pages.
 

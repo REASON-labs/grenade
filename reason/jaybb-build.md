@@ -25,7 +25,7 @@ The site's job in one line: **a stranger knows who Jay is and has one obvious ne
 | `/learn` | Pick a course | One-page sheet | Each course with price, length and open or not |
 | `/learn/[slug]` | Decide to buy | Decision page | What it fixes, price, length, who teaches it, refund line, Buy |
 | `/referrals` | Grab a code | One-page sheet | Cards by topic, each with one line on why and a copyable code |
-| `/thoughts` | Read posts | List | Newest posts with date and tag. Hidden from nav while empty |
+| `/thoughts` (renaming, name TBD) | Read about Jay's work and projects | List | Newest posts with date and project tag. Hidden from nav while empty. Personal posts never go here: hidden and `noindex`, or off-site |
 | `/contact` | Send a message | Tool | Name, email, message, send. Says how fast Jay usually replies |
 | 404 | Get back on track | Tiny page | It's not here, plus the 3 main doors |
 
@@ -54,7 +54,7 @@ Jay's voice everywhere a person reads, including the terminal's answers, meta de
 
 | Instead of | Write |
 |---|---|
-| // transmissions | thoughts |
+| // transmissions | the new section name, said plainly |
 | transmission...? (message box) | what's up? |
 | transmission received. | Got it. I'll get back to you soon. |
 | signal lost · no transmission at this frequency | This page doesn't exist. |
